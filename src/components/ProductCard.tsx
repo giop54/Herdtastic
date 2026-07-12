@@ -11,10 +11,10 @@ export function ProductCard({ product }: { product: Product }) {
   const category = product.category_ids[0];
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-md border border-cream-200 bg-white shadow-card transition-shadow duration-200 ease-out hover:shadow-raised">
+    <div className="group flex flex-col overflow-hidden rounded-xl border border-cream-200 bg-white shadow-card transition duration-300 ease-out hover:-translate-y-1 hover:border-tan-300 hover:shadow-lift">
       <Link
         to={`/products/${product.slug}`}
-        className="flex aspect-[280/170] items-center justify-center overflow-hidden bg-cream-200"
+        className="relative flex aspect-[280/170] items-center justify-center overflow-hidden bg-cream-200"
       >
         {product.images[0] ? (
           <img
@@ -22,11 +22,16 @@ export function ProductCard({ product }: { product: Product }) {
             alt={product.name}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         ) : (
           <span className="font-condensed text-xs uppercase tracking-wide2 text-ink-400">
             Sire photo
+          </span>
+        )}
+        {!inStock && (
+          <span className="absolute left-3 top-3 rounded-full bg-navy-900/85 px-2.5 py-1 font-condensed text-[11px] font-semibold uppercase tracking-caps text-cream-50 backdrop-blur-sm">
+            Sold Out
           </span>
         )}
       </Link>
@@ -39,14 +44,14 @@ export function ProductCard({ product }: { product: Product }) {
         )}
         <Link
           to={`/products/${product.slug}`}
-          className="font-display text-lg leading-snug text-navy-800 no-underline hover:text-red-700"
+          className="font-display text-lg leading-snug text-navy-800 no-underline transition-colors duration-200 hover:text-red-700"
         >
           {product.name}
         </Link>
 
         <div className="mt-auto flex items-center justify-between pt-2">
           {minPrice !== null && <PriceTag cents={minPrice} size="sm" />}
-          <Link to={`/products/${product.slug}`}>
+          <Link to={`/products/${product.slug}`} tabIndex={-1} aria-hidden="true">
             <Button size="sm" disabled={!inStock}>
               {inStock ? "Shop" : "Sold Out"}
             </Button>

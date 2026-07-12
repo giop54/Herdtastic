@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getProduct } from "../api/products";
+import { createBooking, getBookingAvailability } from "../api/bookings";
 import { ApiError } from "../api/client";
-import type { Product } from "../types";
+import type { BookingAvailability, Product } from "../types";
 import { useCart } from "../context/CartContext";
 import { formatDetailValue, titleCase } from "../lib/text";
-import { Badge, Button, PriceTag, QuantityStepper, Select, Toast } from "../components/ui";
+import { Badge, Button, Input, PriceTag, QuantityStepper, Select, Toast } from "../components/ui";
 import { Seo } from "../components/Seo";
 
 function truncate(text: string, max: number): string {
@@ -25,6 +26,11 @@ export function ProductDetailPage() {
   const [adding, setAdding] = useState(false);
   const [addError, setAddError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
+  const [availability, setAvailability] = useState<BookingAvailability | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [booking, setBooking] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
+  const [contact, setContact] = useState({ name: "", email: "", phone: "" });
 
   useEffect(() => {
     if (!slug) return;
@@ -54,6 +60,21 @@ export function ProductDetailPage() {
     };
   }, [slug]);
 
+  useEffect(() => {
+    if (!product || product.fulfillment_type !== "booking") return;
+    const start = new Date();
+    start.setDate(start.getDate() + 1);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 89);
+    const formatDate = (value: Date) => value.toISOString().slice(0, 10);
+    getBookingAvailability(product.slug, formatDate(start), formatDate(end))
+      .then((data) => {
+        setAvailability(data);
+        setSelectedDate(data.days.find((day) => day.available)?.date ?? null);
+      })
+      .catch((err) => setBookingError(err instanceof ApiError ? err.message : "Could not load availability."));
+  }, [product]);
+
   const selectedVariant = useMemo(
     () => product?.variants.find((v) => v.variant_id === selectedVariantId) ?? null,
     [product, selectedVariantId],
@@ -78,6 +99,30 @@ export function ProductDetailPage() {
       setAddError(err instanceof ApiError ? err.message : "Could not add that item to your cart.");
     } finally {
       setAdding(false);
+    }
+  }
+
+  async function handleBooking(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!product || !selectedDate) return;
+    setBooking(true);
+    setBookingError(null);
+    try {
+      const created = await createBooking({
+        product_id: product.id,
+        booking_date: selectedDate,
+        customer_name: contact.name,
+        customer_email: contact.email,
+        customer_phone: contact.phone,
+      });
+      navigate(`/bookings/${created.id}`);
+    } catch (err) {
+      setBookingError(err instanceof ApiError ? err.message : "Could not create your booking.");
+      if (err instanceof ApiError && err.code === "BOOKING_DATE_UNAVAILABLE") {
+        setAvailability(null);
+      }
+    } finally {
+      setBooking(false);
     }
   }
 
@@ -110,6 +155,7 @@ export function ProductDetailPage() {
   }
 
   const category = product.category_ids[0];
+  const isBookable = product.fulfillment_type === "booking";
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -157,7 +203,9 @@ export function ProductDetailPage() {
                 alt={product.name}
                 loading="eager"
                 decoding="async"
-                fetchPriority="high"
+                // Lowercase attr: React 18 passes it through to the DOM (LCP hint) without
+                // the "unknown prop" warning the camelCase `fetchPriority` triggers.
+                {...{ fetchpriority: "high" }}
                 className="h-full w-full rounded-lg object-cover"
               />
             ) : (
@@ -169,7 +217,9 @@ export function ProductDetailPage() {
         </div>
 
         <div className="flex flex-col gap-3.5">
-          <Badge tone={inStock ? "success" : "warning"}>{inStock ? "In Stock" : "Sold Out"}</Badge>
+          <Badge tone={isBookable || inStock ? "success" : "warning"}>
+            {isBookable ? "Book by day" : inStock ? "In Stock" : "Sold Out"}
+          </Badge>
 
           <div>
             {category && (
@@ -182,7 +232,7 @@ export function ProductDetailPage() {
 
           <p className="max-w-lg text-base leading-relaxed text-ink-900">{product.description}</p>
 
-          {product.variants.length > 1 && (
+          {!isBookable && product.variants.length > 1 && (
             <Select
               label="Options"
               className="max-w-xs"
@@ -196,23 +246,48 @@ export function ProductDetailPage() {
             />
           )}
 
-          <div className="flex flex-wrap items-center gap-5 border-t border-cream-200 pt-4">
-            {selectedVariant && <PriceTag cents={selectedVariant.price_cents} size="lg" />}
-            <QuantityStepper value={quantity} min={1} max={maxQuantity} onChange={setQuantity} />
-            <Button
-              size="lg"
-              onClick={handleAddToCart}
-              disabled={!inStock || adding || !selectedVariant}
-            >
-              {adding ? "Adding…" : inStock ? "Add to Cart" : "Sold Out"}
-            </Button>
-          </div>
-
-          {addError && <p className="text-sm text-[var(--status-danger)]">{addError}</p>}
-          {added && !addError && (
-            <Toast tone="success" action="View Cart" onAction={() => navigate("/cart")}>
-              Added to cart.
-            </Toast>
+          {isBookable ? (
+            <form className="border-t border-cream-200 pt-4" onSubmit={handleBooking}>
+              <p className="mb-3 text-sm text-ink-600">Choose an available day, then provide your contact details.</p>
+              {availability ? (
+                <div className="mb-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
+                  {availability.days.map((day) => (
+                    <button
+                      key={day.date}
+                      type="button"
+                      disabled={!day.available}
+                      onClick={() => setSelectedDate(day.date)}
+                      className={`rounded-sm border px-2 py-2 text-xs ${selectedDate === day.date ? "border-navy-800 bg-navy-800 text-white" : "border-tan-300 bg-white text-ink-900"} disabled:cursor-not-allowed disabled:opacity-40`}
+                    >
+                      {new Date(`${day.date}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="mb-4 text-sm text-ink-600">Loading available days…</p>
+              )}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Input label="Name" required value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} />
+                <Input label="Email" type="email" required value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} />
+                <Input label="Phone" type="tel" required value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} />
+              </div>
+              <Button className="mt-4" size="lg" type="submit" disabled={!selectedDate || booking || !availability}>
+                {booking ? "Booking…" : "Book this day"}
+              </Button>
+              {bookingError && <p className="mt-3 text-sm text-[var(--status-danger)]">{bookingError}</p>}
+            </form>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center gap-5 border-t border-cream-200 pt-4">
+                {selectedVariant && <PriceTag cents={selectedVariant.price_cents} size="lg" />}
+                <QuantityStepper value={quantity} min={1} max={maxQuantity} onChange={setQuantity} />
+                <Button size="lg" onClick={handleAddToCart} disabled={!inStock || adding || !selectedVariant}>
+                  {adding ? "Adding…" : inStock ? "Add to Cart" : "Sold Out"}
+                </Button>
+              </div>
+              {addError && <p className="text-sm text-[var(--status-danger)]">{addError}</p>}
+              {added && !addError && <Toast tone="success" action="View Cart" onAction={() => navigate("/cart")}>Added to cart.</Toast>}
+            </>
           )}
         </div>
       </div>

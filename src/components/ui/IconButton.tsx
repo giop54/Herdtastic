@@ -23,15 +23,18 @@ export function IconButton({
     <button
       aria-label={label}
       title={label}
-      className={`relative inline-flex items-center justify-center rounded-sm text-navy-800 transition-colors duration-200 ease-out hover:bg-cream-100 ${
-        variant === "outline" ? "border border-tan-300" : "border border-transparent"
+      className={`relative inline-flex cursor-pointer items-center justify-center rounded-md text-navy-800 transition duration-200 ease-out hover:bg-cream-100 active:scale-95 ${
+        variant === "outline" ? "border border-tan-300 hover:border-navy-800" : "border border-transparent"
       } ${className}`}
       style={{ width: size, height: size, ...style }}
       {...rest}
     >
       <IconComp size={Math.round(size * 0.5)} strokeWidth={1.75} />
       {badge != null && badge !== 0 && (
-        <span className="absolute -right-1.5 -top-1.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-700 px-1 font-body text-[11px] font-bold text-white">
+        <span
+          key={badge}
+          className="absolute -right-1.5 -top-1.5 inline-flex h-[18px] min-w-[18px] animate-scale-in items-center justify-center rounded-full bg-red-700 px-1 font-body text-[11px] font-bold text-white shadow-sm"
+        >
           {badge}
         </span>
       )}

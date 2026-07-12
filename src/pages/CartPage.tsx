@@ -102,52 +102,61 @@ export function CartPage() {
             return (
               <div
                 key={item.item_id}
-                className="flex flex-wrap items-center gap-4 rounded-md border border-cream-200 bg-white p-4 shadow-card"
+                className="flex flex-col gap-3 rounded-md border border-cream-200 bg-white p-4 shadow-card sm:flex-row sm:items-center sm:gap-4"
               >
-                <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-cream-200">
-                  {product?.images[0] && (
-                    <img
-                      src={product.images[0]}
-                      alt={product.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-cover"
-                    />
-                  )}
-                </div>
+                {/* On sm+ this wrapper becomes `contents` (no box of its own), so its
+                    children join the outer flex row directly — reproducing the single-row
+                    desktop layout. Below sm it stays a normal row, so this and the next
+                    group stack as two compact rows instead of squeezing into one and
+                    overlapping the stepper. */}
+                <div className="flex items-center gap-4 sm:contents">
+                  <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-cream-200">
+                    {product?.images[0] && (
+                      <img
+                        src={product.images[0]}
+                        alt={product.name}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                  </div>
 
-                <div className="min-w-0 flex-1">
-                  <p className="font-display text-lg text-navy-800">
-                    {product?.name ?? "Unknown product"}
-                  </p>
-                  {variant && (
-                    <p className="mt-0.5 font-condensed text-xs uppercase tracking-caps text-ink-600">
-                      {variant.name} &middot; {formatCents(variant.price_cents, currency)} each
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display text-lg text-navy-800">
+                      {product?.name ?? "Unknown product"}
                     </p>
-                  )}
+                    {variant && (
+                      <p className="mt-0.5 font-condensed text-xs uppercase tracking-caps text-ink-600">
+                        {variant.name} &middot; {formatCents(variant.price_cents, currency)} each
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                <QuantityStepper
-                  value={item.quantity}
-                  min={1}
-                  max={100}
-                  onChange={(quantity) =>
-                    updateQuantity(item.item_id, item.product_id, item.variant_id, quantity)
-                  }
-                />
+                <div className="flex items-center justify-between gap-4 sm:contents">
+                  <QuantityStepper
+                    value={item.quantity}
+                    min={1}
+                    max={100}
+                    onChange={(quantity) =>
+                      updateQuantity(item.item_id, item.product_id, item.variant_id, quantity)
+                    }
+                  />
 
-                <div className="w-24 text-right">
-                  {variant && <PriceTag cents={variant.price_cents * item.quantity} size="sm" />}
+                  <div className="text-right sm:w-24">
+                    {variant && <PriceTag cents={variant.price_cents * item.quantity} size="sm" />}
+                  </div>
+
+                  <button
+                    type="button"
+                    aria-label="Remove"
+                    onClick={() => setConfirmItem(item)}
+                    className="inline-flex text-ink-400 hover:text-red-700"
+                  >
+                    <Trash2 size={18} />
+                  </button>
                 </div>
-
-                <button
-                  type="button"
-                  aria-label="Remove"
-                  onClick={() => setConfirmItem(item)}
-                  className="inline-flex text-ink-400 hover:text-red-700"
-                >
-                  <Trash2 size={18} />
-                </button>
               </div>
             );
           })}

@@ -16,7 +16,37 @@ export interface Product {
   images: string[];
   category_ids: string[];
   details: Record<string, unknown>;
+  fulfillment_type: "shipping" | "booking";
   variants: ProductVariant[];
+}
+
+export interface BookingDay {
+  date: string;
+  available: boolean;
+}
+
+export interface BookingAvailability {
+  product_id: string;
+  timezone: string;
+  days: BookingDay[];
+}
+
+export interface Booking {
+  id: string;
+  product_id: string;
+  booking_date: string;
+  status: "active" | "cancelled";
+  customer_name: string;
+  customer_email: string;
+  customer_phone: string;
+  created_at: string;
+  updated_at: string;
+  cancelled_at: string | null;
+}
+
+export interface BookingCreateResponse {
+  booking: Booking;
+  guest_token?: string;
 }
 
 export interface CartItem {

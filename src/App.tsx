@@ -8,6 +8,7 @@ import { CheckoutSuccessPage } from "./pages/CheckoutSuccessPage";
 import { CheckoutCancelPage } from "./pages/CheckoutCancelPage";
 import { OrderLookupPage } from "./pages/OrderLookupPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { BookingPage } from "./pages/BookingPage";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route index element={<HomePage />} />
         <Route path="catalog" element={<CatalogPage />} />
         <Route path="products/:slug" element={<ProductDetailPage />} />
+        <Route path="bookings/:bookingId" element={<BookingPage />} />
         <Route path="cart" element={<CartPage />} />
         <Route path="checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="checkout/cancel" element={<CheckoutCancelPage />} />

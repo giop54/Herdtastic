@@ -3,14 +3,27 @@ import { listProductsCached } from "../api/products";
 import { ApiError } from "../api/client";
 import type { Product } from "../types";
 import { ProductCard } from "../components/ProductCard";
-import { Tag } from "../components/ui";
-import { titleCase } from "../lib/text";
+import { Tag, ProductCardSkeleton } from "../components/ui";
 import { Seo } from "../components/Seo";
+
+// The storefront sells exactly two things. Category filters are a fixed taxonomy
+// rather than derived from product data, so the shop always shows these two options.
+// `slugs` matches generously against product `category_ids` so items bucket correctly
+// whatever exact slug the backend assigns.
+const CATEGORIES: { label: string; slugs: string[] }[] = [
+  { label: "Bull Rentals", slugs: ["bull-rentals", "bull-rental", "bull", "rentals", "rental"] },
+  {
+    label: "Frozen Semen",
+    slugs: ["frozen-semen", "semen", "frozen", "straws", "straw", "ai"],
+  },
+];
+
+const ALL = "All";
 
 export function CatalogPage() {
   const [products, setProducts] = useState<Product[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [category, setCategory] = useState<string>("All");
+  const [category, setCategory] = useState<string>(ALL);
 
   useEffect(() => {
     let cancelled = false;
@@ -30,16 +43,14 @@ export function CatalogPage() {
     };
   }, []);
 
-  const categories = useMemo(() => {
-    const unique = new Set<string>();
-    products?.forEach((p) => p.category_ids.forEach((c) => unique.add(c)));
-    return ["All", ...Array.from(unique)];
-  }, [products]);
-
   const visibleProducts = useMemo(() => {
     if (!products) return [];
-    if (category === "All") return products;
-    return products.filter((p) => p.category_ids.includes(category));
+    if (category === ALL) return products;
+    const cfg = CATEGORIES.find((c) => c.label === category);
+    if (!cfg) return products;
+    return products.filter((p) =>
+      p.category_ids.some((id) => cfg.slugs.includes(id.toLowerCase())),
+    );
   }, [products, category]);
 
   return (
@@ -59,15 +70,13 @@ export function CatalogPage() {
         </p>
       </div>
 
-      {categories.length > 2 && (
-        <div className="mb-7 flex flex-wrap items-center gap-2.5">
-          {categories.map((c) => (
-            <Tag key={c} selected={category === c} onClick={() => setCategory(c)}>
-              {c === "All" ? "All" : titleCase(c)}
-            </Tag>
-          ))}
-        </div>
-      )}
+      <div className="mb-7 flex flex-wrap items-center gap-2.5">
+        {[ALL, ...CATEGORIES.map((c) => c.label)].map((label) => (
+          <Tag key={label} selected={category === label} onClick={() => setCategory(label)}>
+            {label}
+          </Tag>
+        ))}
+      </div>
 
       {error && (
         <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]" role="alert">
@@ -75,14 +84,23 @@ export function CatalogPage() {
         </p>
       )}
 
-      {!error && products === null && <p className="text-ink-600">Loading sires&hellip;</p>}
+      {!error && products === null && (
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      )}
 
       {!error && products !== null && visibleProducts.length === 0 && (
         <p className="text-ink-600">No sires match those filters.</p>
       )}
 
       {!error && visibleProducts.length > 0 && (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          key={category}
+          className="stagger grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {visibleProducts.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

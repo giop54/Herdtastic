@@ -18,12 +18,12 @@ export function Header() {
         &#9733; Cryo-shipped to all 50 states &middot; Family-owned in Texas &#9733;
       </div>
 
-      <header className="border-b border-cream-200 bg-white px-4 py-3.5 sm:px-10">
+      <header className="sticky top-0 z-40 border-b border-cream-200 bg-white/90 px-4 py-3 backdrop-blur-md sm:px-10">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-7 gap-y-3">
-          <NavLink to="/" className="flex items-center gap-3">
+          <NavLink to="/" className="group flex items-center gap-3">
             <span
               aria-hidden
-              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-navy-800 font-display text-base text-navy-800"
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-navy-800 font-display text-base text-cream-50 shadow-hard-sm transition-transform duration-200 ease-out group-hover:-translate-y-0.5"
             >
               H
             </span>
