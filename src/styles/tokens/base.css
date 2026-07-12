@@ -1,0 +1,10 @@
+/* Heardtastic — minimal global defaults */
+body {
+  font-family: var(--font-body);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--link); text-decoration-color: color-mix(in srgb, var(--link) 40%, transparent); }
+a:hover { color: var(--link-hover); }
+::selection { background: var(--navy-100); }

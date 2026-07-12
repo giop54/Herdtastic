@@ -1,0 +1,70 @@
+/* Heardtastic — color tokens. Pulled from the badge logo: crimson red, old-glory navy, cream white. */
+:root {
+  /* Base — reds */
+  --red-900: #6E0E1E;
+  --red-800: #8B1526;
+  --red-700: #A6192E; /* brand crimson (logo shield) */
+  --red-600: #BE2B40;
+  --red-100: #F7E3E6;
+  --red-50:  #FBF1F2;
+
+  /* Base — navies */
+  --navy-900: #14264A;
+  --navy-800: #1E3A6E; /* brand navy (logo longhorn/star ring) */
+  --navy-700: #2B4B87;
+  --navy-600: #3B5FA3;
+  --navy-100: #E2E8F4;
+  --navy-50:  #F0F3FA;
+
+  /* Base — neutrals (warm, saddle-leaning) */
+  --cream-50:  #FDFBF6; /* page background */
+  --cream-100: #F7F3E9;
+  --cream-200: #EFE8D8;
+  --tan-300:   #D9CDB4;
+  --brown-600: #6B5138; /* saddle brown, sparing accents */
+  --ink-900:   #1C1B18; /* near-black text */
+  --ink-600:   #57544C;
+  --ink-400:   #8C887C;
+  --white:     #FFFFFF;
+
+  /* Semantic — surfaces */
+  --surface-page: var(--cream-50);
+  --surface-card: var(--white);
+  --surface-raised: var(--cream-100);
+  --surface-inverse: var(--navy-800);
+  --surface-brand: var(--red-700);
+
+  /* Semantic — text */
+  --text-body: var(--ink-900);
+  --text-muted: var(--ink-600);
+  --text-faint: var(--ink-400);
+  --text-on-brand: var(--white);
+  --text-on-inverse: var(--cream-50);
+  --text-heading: var(--navy-800);
+  --text-price: var(--red-700);
+
+  /* Semantic — interactive */
+  --action-primary: var(--red-700);
+  --action-primary-hover: var(--red-800);
+  --action-primary-active: var(--red-900);
+  --action-secondary: var(--navy-800);
+  --action-secondary-hover: var(--navy-900);
+  --link: var(--navy-700);
+  --link-hover: var(--red-700);
+  --focus-ring: var(--navy-600);
+
+  /* Semantic — lines */
+  --border-default: var(--cream-200);
+  --border-strong: var(--tan-300);
+  --border-input: var(--tan-300);
+
+  /* Semantic — status */
+  --status-success: #2E6B3F;
+  --status-success-bg: #E7F1E9;
+  --status-warning: #9A6A0B;
+  --status-warning-bg: #FAF0DA;
+  --status-danger: var(--red-700);
+  --status-danger-bg: var(--red-100);
+  --status-info: var(--navy-700);
+  --status-info-bg: var(--navy-100);
+}
