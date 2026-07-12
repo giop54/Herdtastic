@@ -9,6 +9,7 @@ import { Reveal } from "../components/Reveal";
 import { Seo } from "../components/Seo";
 import { titleCase } from "../lib/text";
 import { formatCents } from "../lib/money";
+import { BrandMedallion } from "../components/BrandMedallion";
 
 const HOME_JSON_LD = [
   {
@@ -34,87 +35,25 @@ const MARQUEE_ITEMS = [
   "Ships to All 50 States",
 ];
 
-/** Asymmetric visual panel: gradient-mesh blobs behind a rotating brand-seal medallion —
- * a circular badge with the brand name curved along the ring, echoing the real Heardtastic
- * logo's own seal/shield concept. Chosen over live product photography (the catalog's
- * placeholder bakery/seafood test data would look out of place anchoring the brand hero)
- * and over floating UI chips (felt too generic-SaaS and disconnected from the brand). The
- * only motion is a slow, ambient rotation — not attention-grabbing, just alive. */
 function HeroSeal() {
   return (
-    <div className="relative hidden lg:flex items-center justify-center" aria-hidden="true">
-      <div className="absolute -right-10 -top-16 h-72 w-72 rounded-full bg-red-600/30 blur-3xl" />
-      <div className="absolute -bottom-10 -left-10 h-72 w-72 rounded-full bg-navy-500/30 blur-3xl" />
-
-      <div className="relative flex min-h-[420px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl">
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 1px 1px, var(--cream-50) 1px, transparent 0)",
-            backgroundSize: "24px 24px",
-          }}
-        />
-        <div className="absolute h-64 w-64 rounded-full bg-red-600/20 blur-2xl" />
-
-        <div className="relative h-80 w-80">
-          <svg viewBox="0 0 320 320" className="absolute inset-0 h-full w-full animate-spin-slow">
-            <defs>
-              <path id="sealRingPath" d="M160,30 a130,130 0 1 1 -0.1,0" fill="none" />
-            </defs>
-            <circle
-              cx="160"
-              cy="160"
-              r="130"
-              fill="none"
-              stroke="rgba(253,251,246,0.18)"
-              strokeWidth="1"
-              strokeDasharray="1 7"
-              strokeLinecap="round"
-            />
-            <text className="font-condensed" fill="rgba(253,251,246,0.55)" fontSize="11" letterSpacing="3">
-              <textPath href="#sealRingPath" startOffset="0%">
-                TEXAS ALL-AMERICAN CATTLE CO. &#9733; EST. HEARDTASTIC &#9733;
-              </textPath>
-            </text>
-          </svg>
-
-          <div className="absolute inset-0 m-auto h-52 w-52 rounded-full border border-white/15">
-            <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-xs text-red-500">
-              &#9733;
-            </span>
-            <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-red-500">
-              &#9733;
-            </span>
-            <span className="absolute -left-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
-              &#9733;
-            </span>
-            <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
-              &#9733;
-            </span>
-          </div>
-
-          <div className="absolute inset-0 m-auto flex h-32 w-32 items-center justify-center rounded-full bg-navy-900 shadow-lift ring-1 ring-white/10">
-            <span className="font-display text-5xl text-cream-50">H</span>
-          </div>
-        </div>
+    <div className="relative flex items-center justify-center" aria-hidden="true">
+      <div className="absolute h-[82%] w-[82%] rounded-full bg-red-700/25 blur-3xl" />
+      <div className="relative flex min-h-[310px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-8 shadow-2xl sm:min-h-[400px]">
+        <div className="absolute inset-x-8 top-8 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <BrandMedallion className="w-full max-w-[340px] border-4 border-white shadow-2xl ring-8 ring-white/10" decorative priority />
       </div>
     </div>
   );
 }
 
-/** Auto-scrolling strip restating trust signals for visual rhythm between hero and bento grid. */
 function TrustMarquee() {
-  const loop = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
   return (
-    <div
-      aria-hidden="true"
-      className="-mx-4 overflow-hidden border-b border-cream-200 bg-white py-3 sm:-mx-10"
-    >
-      <div className="flex w-max animate-marquee gap-10">
-        {loop.map((item, i) => (
+    <div className="-mx-4 border-b border-cream-200 bg-white px-4 py-4 sm:-mx-8 sm:px-8 lg:-mx-10 lg:px-10">
+      <div className="mx-auto flex max-w-7xl flex-wrap justify-center gap-x-10 gap-y-2">
+        {MARQUEE_ITEMS.map((item) => (
           <span
-            key={i}
+            key={item}
             className="inline-flex items-center gap-2 whitespace-nowrap font-condensed text-xs font-semibold uppercase tracking-caps text-navy-700"
           >
             <span className="text-red-600">&#9733;</span>
@@ -128,6 +67,7 @@ function TrustMarquee() {
 
 /** Large image-led tile that anchors the bento grid. */
 function FeaturedTile({ product }: { product: Product }) {
+  const isBookable = product.fulfillment_type === "booking";
   const minPrice = Math.min(...product.variants.filter((v) => v.active).map((v) => v.price_cents));
   const category = product.category_ids[0];
   return (
@@ -145,7 +85,7 @@ function FeaturedTile({ product }: { product: Product }) {
       <div className="absolute inset-0 bg-gradient-to-t from-navy-900/90 via-navy-900/30 to-transparent" />
       <div className="relative flex flex-col gap-2 p-6">
         <span className="w-fit rounded-full bg-red-700 px-2.5 py-1 font-condensed text-[11px] font-semibold uppercase tracking-caps text-white">
-          Featured Sire
+          {isBookable ? "Book by Day" : "Featured Sire"}
         </span>
         {category && (
           <span className="font-condensed text-xs uppercase tracking-caps text-cream-200">
@@ -156,11 +96,11 @@ function FeaturedTile({ product }: { product: Product }) {
           {product.name}
         </h3>
         <div className="mt-1 flex items-center gap-4">
-          {Number.isFinite(minPrice) && (
+          {!isBookable && Number.isFinite(minPrice) && (
             <span className="font-display text-xl text-cream-50">{formatCents(minPrice)}</span>
           )}
           <span className="inline-flex items-center gap-1.5 font-condensed text-xs font-semibold uppercase tracking-caps text-cream-50 transition-transform duration-200 group-hover:translate-x-1">
-            View Sire <ArrowRight size={14} strokeWidth={2.25} />
+            {isBookable ? "Check dates" : "View sire"} <ArrowRight size={14} strokeWidth={2.25} />
           </span>
         </div>
       </div>
@@ -232,8 +172,8 @@ export function HomePage() {
     };
   }, []);
 
-  const featured = products?.[0] ?? null;
-  const rest = products?.slice(1, 4) ?? [];
+  const featured = products?.find((product) => product.fulfillment_type === "booking") ?? products?.[0] ?? null;
+  const rest = products?.filter((product) => product.id !== featured?.id).slice(0, 3) ?? [];
 
   return (
     <div>
@@ -246,7 +186,7 @@ export function HomePage() {
       />
 
       {/* Hero band */}
-      <section className="relative -mx-4 -mt-9 overflow-hidden bg-navy-800 px-4 pb-12 pt-16 text-cream-50 sm:-mx-10 sm:px-10 sm:pb-14 sm:pt-20">
+      <section className="relative -mx-4 -mt-9 overflow-hidden bg-navy-800 px-4 pb-12 pt-14 text-cream-50 sm:-mx-8 sm:px-8 sm:pb-16 sm:pt-18 lg:-mx-10 lg:px-10">
         {/* subtle poster-star texture */}
         <div
           aria-hidden="true"
@@ -257,7 +197,7 @@ export function HomePage() {
             backgroundSize: "28px 28px",
           }}
         />
-        <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+        <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div className="max-w-2xl animate-fade-rise">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-navy-600 bg-navy-900/40 px-3 py-1 font-condensed text-[12px] font-semibold uppercase tracking-wide2 text-red-600">
               <span aria-hidden="true">★</span> Texas All-American Cattle Co.
@@ -265,19 +205,18 @@ export function HomePage() {
             <h1 className="font-display text-4xl leading-[1.05] text-cream-50 sm:text-5xl lg:text-6xl">
               Proven Texas Genetics.
               <br />
-              Shipped Nationwide.
+              Shipped or Booked.
             </h1>
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-navy-100">
-              Registered sires and cryo-shipped straws, ready to build your herd on the best in the
-              business.
+              Shop registered genetics or reserve a breeding day with trusted Texas sires—all from one dependable cattle operation.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link to="/catalog">
-                <Button size="lg">Shop Sires</Button>
+                <Button size="lg">Browse Sires</Button>
               </Link>
-              <Link to="/orders/lookup">
+              <Link to="/catalog">
                 <Button size="lg" variant="ghost" className="!text-cream-50 hover:!bg-navy-700">
-                  Track an Order
+                  Book a Bull
                 </Button>
               </Link>
             </div>

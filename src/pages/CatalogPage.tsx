@@ -10,13 +10,7 @@ import { Seo } from "../components/Seo";
 // rather than derived from product data, so the shop always shows these two options.
 // `slugs` matches generously against product `category_ids` so items bucket correctly
 // whatever exact slug the backend assigns.
-const CATEGORIES: { label: string; slugs: string[] }[] = [
-  { label: "Bull Rentals", slugs: ["bull-rentals", "bull-rental", "bull", "rentals", "rental"] },
-  {
-    label: "Frozen Semen",
-    slugs: ["frozen-semen", "semen", "frozen", "straws", "straw", "ai"],
-  },
-];
+const CATEGORIES = ["Book a Bull", "Frozen Semen"] as const;
 
 const ALL = "All";
 
@@ -46,11 +40,13 @@ export function CatalogPage() {
   const visibleProducts = useMemo(() => {
     if (!products) return [];
     if (category === ALL) return products;
-    const cfg = CATEGORIES.find((c) => c.label === category);
-    if (!cfg) return products;
-    return products.filter((p) =>
-      p.category_ids.some((id) => cfg.slugs.includes(id.toLowerCase())),
-    );
+    if (category === "Book a Bull") {
+      return products.filter((product) => product.fulfillment_type === "booking");
+    }
+    if (category === "Frozen Semen") {
+      return products.filter((product) => product.fulfillment_type === "shipping");
+    }
+    return products;
   }, [products, category]);
 
   return (
@@ -71,7 +67,7 @@ export function CatalogPage() {
       </div>
 
       <div className="mb-7 flex flex-wrap items-center gap-2.5">
-        {[ALL, ...CATEGORIES.map((c) => c.label)].map((label) => (
+        {[ALL, ...CATEGORIES].map((label) => (
           <Tag key={label} selected={category === label} onClick={() => setCategory(label)}>
             {label}
           </Tag>

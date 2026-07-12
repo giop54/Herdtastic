@@ -1,7 +1,8 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { Search, ShoppingCart } from "lucide-react";
+import { CalendarDays, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { IconButton } from "./ui";
+import { BrandMedallion } from "./BrandMedallion";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `border-b-2 pb-1.5 pt-1 font-condensed text-[13px] font-semibold uppercase tracking-caps transition-colors duration-200 ease-out ${
@@ -18,18 +19,13 @@ export function Header() {
         &#9733; Cryo-shipped to all 50 states &middot; Family-owned in Texas &#9733;
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-cream-200 bg-white/90 px-4 py-3 backdrop-blur-md sm:px-10">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-7 gap-y-3">
+      <header className="sticky top-0 z-40 border-b border-cream-200 bg-white/95 px-4 py-2 shadow-soft backdrop-blur-md sm:px-8">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2">
           <NavLink to="/" className="group flex items-center gap-3">
-            <span
-              aria-hidden
-              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-navy-800 font-display text-base text-cream-50 shadow-hard-sm transition-transform duration-200 ease-out group-hover:-translate-y-0.5"
-            >
-              H
-            </span>
+            <BrandMedallion className="h-12 w-12 flex-shrink-0 border border-cream-200 shadow-soft sm:h-14 sm:w-14" decorative priority />
             <span className="flex flex-col leading-none">
-              <span className="font-display text-xl text-navy-800">Heardtastic</span>
-              <span className="font-condensed text-[10px] uppercase tracking-wide2 text-red-700">
+              <span className="font-display text-lg text-navy-800 sm:text-xl">Heardtastic</span>
+              <span className="mt-1 hidden font-condensed text-[10px] uppercase tracking-wide2 text-red-700 sm:block">
                 Texas All-American Cattle Co.
               </span>
             </span>
@@ -37,7 +33,7 @@ export function Header() {
 
           <nav className="order-last flex w-full gap-5 sm:order-none sm:ml-3 sm:w-auto">
             <NavLink to="/catalog" className={navLinkClass}>
-              Shop Sires
+              Sires &amp; Services
             </NavLink>
             <NavLink to="/orders/lookup" className={navLinkClass}>
               Track an Order
@@ -45,7 +41,12 @@ export function Header() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2.5">
-            <IconButton icon={Search} label="Search" variant="ghost" />
+            <IconButton
+              icon={CalendarDays}
+              label="Book a bull"
+              variant="ghost"
+              onClick={() => navigate("/catalog")}
+            />
             <IconButton
               icon={ShoppingCart}
               label="Cart"
