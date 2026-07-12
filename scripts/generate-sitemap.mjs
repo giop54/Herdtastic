@@ -104,6 +104,7 @@ Allow: /
 Disallow: /cart
 Disallow: /checkout/
 Disallow: /orders/lookup
+Disallow: /admin
 
 Sitemap: ${SITE_URL}/sitemap.xml
 `;

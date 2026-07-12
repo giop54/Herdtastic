@@ -4,7 +4,7 @@ import type { ApiErrorBody } from "../types";
 // storefront to backend CORS configuration and keeps guest-token headers working in previews.
 // An explicit absolute URL remains useful for non-Vercel deployments.
 const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-const API_BASE_URL = (configuredApiBaseUrl || "/api/v1").replace(/\/$/, "");
+export const API_BASE_URL = (configuredApiBaseUrl || "/api/v1").replace(/\/$/, "");
 
 const GUEST_TOKEN_KEY = "herdtastic_guest_token";
 

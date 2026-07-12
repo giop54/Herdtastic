@@ -1,3 +1,4 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { HomePage } from "./pages/HomePage";
@@ -13,9 +14,22 @@ import { FaqPage } from "./pages/FaqPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
 
+// The back office is its own lazy chunk so shoppers never download it.
+const AdminApp = lazy(() => import("./pages/admin"));
+
 function App() {
   return (
     <Routes>
+      <Route
+        path="admin/*"
+        element={
+          <Suspense
+            fallback={<div className="p-10 text-center text-ink-600">Loading admin…</div>}
+          >
+            <AdminApp />
+          </Suspense>
+        }
+      />
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
         <Route path="catalog" element={<CatalogPage />} />

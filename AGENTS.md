@@ -226,3 +226,25 @@ render JS, so this is a reasonable tradeoff without introducing SSR.
   real production domain before deploying** — canonical/OG tags use `window.location.origin` at
   runtime so they're always correct regardless of this value, but the sitemap and robots.txt are
   generated at build time and have no other way to know the real domain.
+
+## Admin panel (/admin)
+
+The back office lives under `/admin` as a single lazy chunk (`src/pages/admin/`, split in
+`App.tsx` so shoppers never download it). Pages: dashboard, products (+editor), bookings
+calendar with blackout dates, orders (+detail), activity (audit log).
+
+- Auth today is the backend's `ADMIN_API_KEY`: `/admin/login` verifies the entered key against
+  `GET /admin/products`, stores it in `sessionStorage` (`herdtastic_admin_key`), and
+  `src/api/admin.ts` attaches it as `X-Admin-Key` on every admin call. When Firebase admin
+  sign-in lands, swap the header for the bearer token via `setFirebaseIdTokenProvider` — the
+  route guard and API layer need no other changes.
+- All admin endpoints and types are documented in the backend repo's `docs/frontend-api.md`
+  ("Admin (back office)"). Admin-only response fields live in `src/types.ts` as `AdminProduct`,
+  `AdminOrder`, etc., extending the public types.
+- A 401 from any admin call signs the admin out (see `describeError` in
+  `src/context/AdminAuthContext.tsx`) and the guard bounces to `/admin/login`.
+- `/admin` is noindexed (Seo component) and disallowed in robots.txt (sitemap script). Keep it
+  out of the sitemap.
+- Local dev against a local backend: run the API with `ADMIN_API_KEY=... uvicorn app.main:app
+  --port 8791` in the backend repo, then use the `herdtastic-dev-local-api` launch config
+  (sets `VITE_API_BASE_URL=http://localhost:8791/api/v1`).
