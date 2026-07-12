@@ -17,11 +17,16 @@ npm install
 npm run dev
 ```
 
-Configure the API base URL in `.env`:
+Local development and Vercel use the same-origin `/api/v1` proxy by default, so no API variable
+is required. For a non-Vercel deployment, you can override the API with an absolute URL:
 
 ```
 VITE_API_BASE_URL=https://ecommerce-api-dev-1063728289659.us-central1.run.app/api/v1
 ```
+
+On Vercel, remove `VITE_API_BASE_URL` or set it to `/api/v1`. Environment variables are embedded
+at build time, so redeploy after changing the value. `vercel.json` proxies API requests to Cloud
+Run and sends all other routes to the React application.
 
 ## Notes
 

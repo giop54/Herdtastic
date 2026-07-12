@@ -25,7 +25,15 @@ const fileEnv = { ...loadEnvFile(join(rootDir, ".env")), ...loadEnvFile(join(roo
 const env = (key) => process.env[key] ?? fileEnv[key];
 
 const SITE_URL = (env("VITE_SITE_URL") ?? "https://www.heardtastic.example").replace(/\/$/, "");
-const API_BASE_URL = env("VITE_API_BASE_URL");
+const DEFAULT_API_BASE_URL =
+  "https://ecommerce-api-dev-1063728289659.us-central1.run.app/api/v1";
+const configuredApiBaseUrl = env("VITE_API_BASE_URL");
+// Relative browser URLs rely on the Vercel/Vite proxy, which is not running during a build.
+// Use the direct API URL for sitemap generation in that case.
+const API_BASE_URL =
+  configuredApiBaseUrl?.startsWith("http://") || configuredApiBaseUrl?.startsWith("https://")
+    ? configuredApiBaseUrl.replace(/\/$/, "")
+    : DEFAULT_API_BASE_URL;
 
 // Cart, checkout, and order-lookup are noindexed (see AGENTS.md) and intentionally excluded —
 // listing noindexed/disallowed URLs in a sitemap is a known anti-pattern.

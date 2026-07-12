@@ -1,8 +1,10 @@
 import type { ApiErrorBody } from "../types";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ??
-  "https://ecommerce-api-dev-1063728289659.us-central1.run.app/api/v1";
+// Browsers use the same-origin Vercel/Vite proxy by default. This avoids coupling the
+// storefront to backend CORS configuration and keeps guest-token headers working in previews.
+// An explicit absolute URL remains useful for non-Vercel deployments.
+const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim();
+const API_BASE_URL = (configuredApiBaseUrl || "/api/v1").replace(/\/$/, "");
 
 const GUEST_TOKEN_KEY = "herdtastic_guest_token";
 
