@@ -9,6 +9,7 @@ import type { Cart, Product } from "../types";
 import { LAST_ORDER_ID_KEY } from "../lib/constants";
 import { formatCents } from "../lib/money";
 import { Button, Dialog, PriceTag, QuantityStepper } from "../components/ui";
+import { Seo } from "../components/Seo";
 
 export function CartPage() {
   const { cart, loading, error, updateQuantity, removeItem } = useCart();
@@ -53,25 +54,36 @@ export function CartPage() {
     }
   }
 
+  const seo = <Seo title="Your Cart" description="Review your Heardtastic cart." path="/cart" noindex />;
+
   if (loading && !cart) {
-    return <p className="text-ink-600">Loading your cart&hellip;</p>;
+    return (
+      <>
+        {seo}
+        <p className="text-ink-600">Loading your cart&hellip;</p>
+      </>
+    );
   }
 
   if (error) {
     return (
-      <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]" role="alert">
-        {error}
-      </p>
+      <>
+        {seo}
+        <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]" role="alert">
+          {error}
+        </p>
+      </>
     );
   }
 
   if (!cart || cart.items.length === 0) {
     return (
       <div className="py-20 text-center">
+        {seo}
         <ShoppingCart className="mx-auto text-ink-400" size={40} />
         <h1 className="mt-4 font-display text-3xl font-normal text-navy-800">Your cart is empty</h1>
         <p className="mt-2 text-ink-600">Straws from proven Texas sires are a click away.</p>
-        <Link to="/" className="mt-6 inline-block">
+        <Link to="/catalog" className="mt-6 inline-block">
           <Button>Shop Sires</Button>
         </Link>
       </div>
@@ -80,6 +92,7 @@ export function CartPage() {
 
   return (
     <div className="flex flex-col items-start gap-10 lg:flex-row">
+      {seo}
       <div className="w-full flex-1">
         <h1 className="mb-6 font-display text-4xl font-normal text-navy-800">Your Cart</h1>
 
@@ -96,6 +109,8 @@ export function CartPage() {
                     <img
                       src={product.images[0]}
                       alt={product.name}
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover"
                     />
                   )}
@@ -158,7 +173,7 @@ export function CartPage() {
           </Button>
           {checkoutError && <p className="text-sm text-[var(--status-danger)]">{checkoutError}</p>}
           <Link
-            to="/"
+            to="/catalog"
             className="text-center font-condensed text-xs uppercase tracking-caps text-navy-700 no-underline hover:text-red-700"
           >
             Continue shopping

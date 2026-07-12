@@ -15,6 +15,7 @@ export interface Product {
   description: string;
   images: string[];
   category_ids: string[];
+  details: Record<string, unknown>;
   variants: ProductVariant[];
 }
 
@@ -81,6 +82,7 @@ export interface Order {
   tax_cents: number;
   discount_cents: number;
   total_cents: number;
+  tracking_number: string | null;
   created_at: string;
   updated_at: string;
   paid_at: string | null;

@@ -1,3 +1,4 @@
+import { Truck } from "lucide-react";
 import type { Order } from "../types";
 import { formatCents } from "../lib/money";
 import { Badge } from "./ui";
@@ -87,6 +88,18 @@ export function OrderSummary({ order }: { order: Order }) {
           </span>
         </div>
       </div>
+
+      {order.tracking_number && (
+        <div className="mt-4 flex items-center gap-2.5 rounded-md border border-cream-200 bg-cream-100 px-4 py-3">
+          <Truck size={18} className="flex-shrink-0 text-navy-700" strokeWidth={1.75} />
+          <div className="text-sm">
+            <span className="font-condensed text-xs font-semibold uppercase tracking-caps text-ink-600">
+              Tracking Number:{" "}
+            </span>
+            <span className="font-mono text-ink-900">{order.tracking_number}</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

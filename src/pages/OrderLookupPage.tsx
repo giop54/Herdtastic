@@ -5,6 +5,7 @@ import { ApiError } from "../api/client";
 import type { Order } from "../types";
 import { OrderSummary } from "../components/OrderSummary";
 import { Button, Input } from "../components/ui";
+import { Seo } from "../components/Seo";
 
 export function OrderLookupPage() {
   const [searchParams] = useSearchParams();
@@ -35,6 +36,12 @@ export function OrderLookupPage() {
 
   return (
     <div className="mx-auto max-w-xl">
+      <Seo
+        title="Track an Order"
+        description="Look up the status of your Heardtastic order."
+        path="/orders/lookup"
+        noindex
+      />
       <div className="mb-1.5 font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">
         Order Status
       </div>

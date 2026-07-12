@@ -2,7 +2,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { Search, ShoppingCart } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { IconButton } from "./ui";
-import badgeLogo from "../assets/heardtastic-badge-logo.png";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `border-b-2 pb-1.5 pt-1 font-condensed text-[13px] font-semibold uppercase tracking-caps transition-colors duration-200 ease-out ${
@@ -19,34 +18,41 @@ export function Header() {
         &#9733; Cryo-shipped to all 50 states &middot; Family-owned in Texas &#9733;
       </div>
 
-      <header className="flex flex-wrap items-center gap-7 border-b border-cream-200 bg-white px-4 py-3.5 sm:px-10">
-        <NavLink to="/" className="flex items-center gap-3">
-          <img src={badgeLogo} alt="Heardtastic badge" className="h-11 w-auto" />
-          <span className="flex flex-col leading-none">
-            <span className="font-display text-xl text-navy-800">Heardtastic</span>
-            <span className="font-condensed text-[10px] uppercase tracking-wide2 text-red-700">
-              Texas All-American Cattle Co.
+      <header className="border-b border-cream-200 bg-white px-4 py-3.5 sm:px-10">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-7 gap-y-3">
+          <NavLink to="/" className="flex items-center gap-3">
+            <span
+              aria-hidden
+              className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-navy-800 font-display text-base text-navy-800"
+            >
+              H
             </span>
-          </span>
-        </NavLink>
-
-        <nav className="ml-3 flex gap-5">
-          <NavLink to="/" end className={navLinkClass}>
-            Shop Sires
+            <span className="flex flex-col leading-none">
+              <span className="font-display text-xl text-navy-800">Heardtastic</span>
+              <span className="font-condensed text-[10px] uppercase tracking-wide2 text-red-700">
+                Texas All-American Cattle Co.
+              </span>
+            </span>
           </NavLink>
-          <NavLink to="/orders/lookup" className={navLinkClass}>
-            Track an Order
-          </NavLink>
-        </nav>
 
-        <div className="ml-auto flex items-center gap-2.5">
-          <IconButton icon={Search} label="Search" variant="ghost" />
-          <IconButton
-            icon={ShoppingCart}
-            label="Cart"
-            badge={itemCount}
-            onClick={() => navigate("/cart")}
-          />
+          <nav className="order-last flex w-full gap-5 sm:order-none sm:ml-3 sm:w-auto">
+            <NavLink to="/catalog" className={navLinkClass}>
+              Shop Sires
+            </NavLink>
+            <NavLink to="/orders/lookup" className={navLinkClass}>
+              Track an Order
+            </NavLink>
+          </nav>
+
+          <div className="ml-auto flex items-center gap-2.5">
+            <IconButton icon={Search} label="Search" variant="ghost" />
+            <IconButton
+              icon={ShoppingCart}
+              label="Cart"
+              badge={itemCount}
+              onClick={() => navigate("/cart")}
+            />
+          </div>
         </div>
       </header>
     </div>

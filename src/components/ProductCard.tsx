@@ -17,7 +17,13 @@ export function ProductCard({ product }: { product: Product }) {
         className="flex aspect-[280/170] items-center justify-center overflow-hidden bg-cream-200"
       >
         {product.images[0] ? (
-          <img src={product.images[0]} alt={product.name} className="h-full w-full object-cover" />
+          <img
+            src={product.images[0]}
+            alt={product.name}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover"
+          />
         ) : (
           <span className="font-condensed text-xs uppercase tracking-wide2 text-ink-400">
             Sire photo

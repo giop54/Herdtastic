@@ -5,6 +5,7 @@ import type { Product } from "../types";
 import { ProductCard } from "../components/ProductCard";
 import { Tag } from "../components/ui";
 import { titleCase } from "../lib/text";
+import { Seo } from "../components/Seo";
 
 export function CatalogPage() {
   const [products, setProducts] = useState<Product[] | null>(null);
@@ -43,6 +44,11 @@ export function CatalogPage() {
 
   return (
     <div>
+      <Seo
+        title="Shop Sires"
+        description="Browse registered Texas sires and semen straws for cattle breeding. Filter by breed, check availability, and order straws ready to ship nationwide."
+        path="/catalog"
+      />
       <div className="mb-7">
         <div className="mb-1.5 font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">
           Semen Catalog

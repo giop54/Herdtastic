@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { LAST_ORDER_ID_KEY } from "../lib/constants";
 import { Button } from "../components/ui";
+import { Seo } from "../components/Seo";
 
 export function CheckoutSuccessPage() {
   const { refresh } = useCart();
@@ -14,6 +15,12 @@ export function CheckoutSuccessPage() {
 
   return (
     <div className="mx-auto max-w-xl py-14 text-center">
+      <Seo
+        title="Order Confirmed"
+        description="Your Heardtastic order is confirmed."
+        path="/checkout/success"
+        noindex
+      />
       <h1 className="font-display text-3xl font-normal text-navy-800">Thank you for your order</h1>
       <p className="mt-3 text-ink-600">
         Your payment is being confirmed. You&rsquo;ll receive an email receipt once it&rsquo;s processed.
@@ -26,7 +33,7 @@ export function CheckoutSuccessPage() {
       )}
 
       <div className="mt-8 flex justify-center gap-4">
-        <Link to="/">
+        <Link to="/catalog">
           <Button variant="secondary">Continue Shopping</Button>
         </Link>
         {orderId && (

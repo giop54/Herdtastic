@@ -4,8 +4,13 @@ import { getProduct } from "../api/products";
 import { ApiError } from "../api/client";
 import type { Product } from "../types";
 import { useCart } from "../context/CartContext";
-import { titleCase } from "../lib/text";
+import { formatDetailValue, titleCase } from "../lib/text";
 import { Badge, Button, PriceTag, QuantityStepper, Select, Toast } from "../components/ui";
+import { Seo } from "../components/Seo";
+
+function truncate(text: string, max: number): string {
+  return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
+}
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -79,9 +84,10 @@ export function ProductDetailPage() {
   if (notFound) {
     return (
       <div className="py-16 text-center">
+        <Seo title="Sire Not Found" description="This sire may no longer be available." noindex />
         <h1 className="font-display text-2xl font-normal text-navy-800">Sire not found</h1>
         <p className="mt-2 text-ink-600">This sire may no longer be available.</p>
-        <Link to="/" className="mt-6 inline-block font-condensed text-sm uppercase tracking-caps text-navy-700 hover:text-red-700">
+        <Link to="/catalog" className="mt-6 inline-block font-condensed text-sm uppercase tracking-caps text-navy-700 hover:text-red-700">
           &larr; Back to catalog
         </Link>
       </div>
@@ -90,9 +96,12 @@ export function ProductDetailPage() {
 
   if (error) {
     return (
-      <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]" role="alert">
-        {error}
-      </p>
+      <>
+        <Seo title="Sire" description="Could not load this sire." noindex />
+        <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]" role="alert">
+          {error}
+        </p>
+      </>
     );
   }
 
@@ -101,11 +110,39 @@ export function ProductDetailPage() {
   }
 
   const category = product.category_ids[0];
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.images,
+    sku: product.variants[0]?.sku,
+    offers: product.variants.map((v) => ({
+      "@type": "Offer",
+      sku: v.sku,
+      name: v.name,
+      price: (v.price_cents / 100).toFixed(2),
+      priceCurrency: "USD",
+      availability:
+        v.active && (!v.track_inventory || v.inventory_quantity > 0)
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
+      url: `${window.location.origin}/products/${product.slug}`,
+    })),
+  };
 
   return (
     <div>
+      <Seo
+        title={product.name}
+        description={truncate(product.description, 160)}
+        path={`/products/${product.slug}`}
+        image={product.images[0]}
+        type="product"
+        jsonLd={productJsonLd}
+      />
       <Link
-        to="/"
+        to="/catalog"
         className="font-condensed text-xs uppercase tracking-caps text-navy-800 no-underline hover:text-red-700"
       >
         &larr; Back to catalog
@@ -118,6 +155,9 @@ export function ProductDetailPage() {
               <img
                 src={product.images[0]}
                 alt={product.name}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
                 className="h-full w-full rounded-lg object-cover"
               />
             ) : (
@@ -176,6 +216,24 @@ export function ProductDetailPage() {
           )}
         </div>
       </div>
+
+      {Object.keys(product.details).length > 0 && (
+        <div className="mt-10 max-w-2xl border-t border-cream-200 pt-6">
+          <div className="mb-2 font-condensed text-xs font-semibold uppercase tracking-caps text-navy-800">
+            Product Details
+          </div>
+          <dl className="divide-y divide-cream-200">
+            {Object.entries(product.details).map(([key, value]) => (
+              <div key={key} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:gap-4">
+                <dt className="font-condensed text-xs uppercase tracking-caps text-ink-600 sm:w-48 sm:flex-shrink-0">
+                  {titleCase(key)}
+                </dt>
+                <dd className="text-sm text-ink-900">{formatDetailValue(value)}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )}
     </div>
   );
 }

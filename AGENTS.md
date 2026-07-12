@@ -20,6 +20,34 @@ means no revision is currently receiving traffic, not a frontend bug. If `listPr
 with a generic (non-`ApiError`) error, check the base URL is actually live with
 `curl -i <base-url>/products` before debugging the frontend.
 
+## Backend repo — check here for API changes
+
+The API's source lives in a sibling repo on this machine:
+**`/Users/giop54/heardtastic-backend`**. This project has no other link to it (no shared
+package, no git submodule) — it's a separate FastAPI/Firestore/Terraform project, and the only
+thing connecting the two is the HTTP contract. Before assuming this AGENTS.md or `src/types.ts`
+is current, check that repo directly:
+
+- `docs/frontend-api.md` in that repo is the same integration guide this file is based on — diff
+  it against what's documented here to spot drift. It has lagged actual code before, so don't
+  treat it as automatically authoritative either.
+- `backend/app/{products,carts,checkout,orders,payments}/schemas.py` are the real Pydantic
+  response/request shapes — the ground truth when `frontend-api.md` and the code disagree.
+- `backend/app/{products,carts,checkout,orders,payments}/router.py` show actual endpoints,
+  methods, and status codes.
+- Run `git log --oneline -- <path>` on any of the above from within that repo to see what's
+  changed and when; `git show <commit> -- <path>` for the actual diff. As of 2026-07-12 every
+  file under `carts/`, `checkout/`, and `orders/` has only ever been touched in its initial
+  commit (`5c63cb9`) — all schema churn so far has been in `products/schemas.py`.
+- Example of a change caught this way: commit `4476a83` ("WIF") added a `details: dict[str, Any]`
+  field to `Product`, returned by `GET /products` and `GET /products/{slug}`. It's additive
+  (defaults to `{}`), so nothing broke, but `src/types.ts`'s `Product` type didn't know about it
+  until someone checked. Treat any new field the same way: confirm whether it's worth surfacing
+  in the UI rather than silently ignoring it.
+- That repo's working tree is often mid-edit with staged-but-uncommitted changes (WIP-style
+  commit messages are the norm there) — `git status`/`git diff --cached` in that repo before
+  relying on `git log` alone, since the latest change may not be committed yet.
+
 ## Auth model
 
 Two mutually exclusive identities per request:
@@ -128,9 +156,18 @@ What was ported and where:
 - `tailwind.config.js` extends `colors`/`fontFamily`/`boxShadow`/`borderRadius`/`letterSpacing`
   to reference those CSS variables (e.g. `red.700` → `var(--red-700)`) rather than hardcoding
   hex values, so re-pulling the token files keeps Tailwind in sync automatically.
-- `assets/heardtastic-badge-logo.png` → `src/assets/heardtastic-badge-logo.png` (used in
-  `Header.tsx`/`Footer.tsx`) and `public/favicon.png`. This is the only real brand asset — never
-  redraw or approximate it.
+- `assets/heardtastic-badge-logo.png` — **do not re-fetch this via `DesignSync.get_file` and
+  wire it up again without checking file size first.** `get_file` silently truncates at 256 KiB;
+  this particular PNG is larger than that, so every fetch (confirmed twice) returns a
+  byte-for-byte identical truncated file with no `IEND` chunk — a corrupted image, not the real
+  badge. It rendered in the header as a tiny cut-off arc instead of the full circular badge,
+  which was the "logo is cutoff" bug. The corrupted copy was deleted from `src/assets/` and
+  `public/favicon.png`; `Header.tsx`/`Footer.tsx` now use a plain text wordmark plus a small
+  CSS/SVG "H" monogram instead of the image, and `public/favicon.svg` replaces the PNG favicon.
+  This matches the design system's own SKILL.md guidance ("use the file or plain wordmark
+  type") — it's an approved fallback, not a workaround to fix later by default. Only reintroduce
+  the image if the user supplies a properly-sized export (well under 256 KiB) directly, since
+  there's no way to pull the full-resolution original through this tool.
 - `components/forms/*.jsx`, `components/display/*.jsx`, `components/feedback/Dialog.jsx`,
   `components/feedback/Toast.jsx` → reimplemented as Tailwind-based React components in
   `src/components/ui/` (`Button`, `IconButton`, `Input`, `Select`, `QuantityStepper`, `Badge`,
@@ -156,3 +193,36 @@ To re-sync after the design system changes: use `DesignSync.list_files` /
 and `src/components/ui/`, and update incrementally — don't wholesale-replace, since the `ui/`
 components have already diverged intentionally (Tailwind instead of inline styles, lucide-react
 instead of CDN).
+
+## SEO
+
+This is a client-rendered SPA (no SSR/SSG), so everything below works by mutating `document.head`
+after mount rather than serving pre-rendered meta tags. That's a real limitation — a crawler that
+doesn't execute JS sees only the static defaults in `index.html` — but modern Googlebot does
+render JS, so this is a reasonable tradeoff without introducing SSR.
+
+- **`src/components/Seo.tsx`** — mount one per page (`<Seo title=... description=... path=...
+  />`). Sets `document.title`, meta description, canonical link, OG/Twitter tags, and an optional
+  JSON-LD `<script>`, all via upsert (finds-and-updates an existing tag if present, otherwise
+  creates one) so it never duplicates the static tags already in `index.html`. Pass `noindex` for
+  pages with no organic search value or that carry per-session/personal state.
+- **Indexing policy**: `/`, `/catalog`, and `/products/:slug` are indexable. `/cart`,
+  `/checkout/success`, `/checkout/cancel`, `/orders/lookup`, and the 404 page are `noindex` —
+  matches the `Disallow` rules in `robots.txt`. Keep these two in sync: don't index something
+  robots.txt blocks from being crawled, and don't list a noindexed path in the sitemap.
+- **Product schema**: `ProductDetailPage` emits a schema.org `Product` with an `Offer` per
+  variant (`price`, `availability` derived from `active`/`inventory_quantity`, matching what's
+  actually shown on the page — don't add fields like `aggregateRating` that we have no real data
+  for).
+- **`scripts/generate-sitemap.mjs`** — runs automatically via the `prebuild` npm hook (also
+  runnable directly as `npm run sitemap`). Fetches `GET /products` from `VITE_API_BASE_URL` to
+  include real product URLs, and writes both `public/sitemap.xml` and `public/robots.txt` (so the
+  `Sitemap:` line always matches `VITE_SITE_URL`). If the API is unreachable it logs a warning and
+  falls back to the static routes only — it must never fail the build. Both output files are
+  regenerated on every build; hand edits to them won't stick.
+- **`VITE_SITE_URL`** in `.env` is a placeholder (`https://www.heardtastic.example` — `.example`
+  is the IANA-reserved placeholder TLD, chosen deliberately so it can't be mistaken for a real
+  domain). It's used to build absolute URLs in the sitemap and `robots.txt`. **Update it to the
+  real production domain before deploying** — canonical/OG tags use `window.location.origin` at
+  runtime so they're always correct regardless of this value, but the sitemap and robots.txt are
+  generated at build time and have no other way to know the real domain.
