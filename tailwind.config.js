@@ -88,10 +88,6 @@ export default {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
-        float: {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-12px)" },
-        },
       },
       animation: {
         "fade-rise": "fade-rise 0.55s var(--ease-out) both",
@@ -99,8 +95,8 @@ export default {
         "scale-in": "scale-in 0.4s var(--ease-snap) both",
         shimmer: "shimmer 1.6s linear infinite",
         marquee: "marquee 28s linear infinite",
-        float: "float 5s ease-in-out infinite",
-        "float-delayed": "float 5s ease-in-out 1.4s infinite",
+        // Reuses Tailwind's built-in `spin` keyframes at ambient badge-rotation speed
+        "spin-slow": "spin 50s linear infinite",
       },
     },
   },

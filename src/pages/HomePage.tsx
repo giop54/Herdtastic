@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Snowflake, Award, Truck, ArrowRight } from "lucide-react";
+import { Snowflake, Award, Truck, ArrowRight, ChevronDown } from "lucide-react";
 import { listProductsCached } from "../api/products";
 import type { Product } from "../types";
 import { Button, Skeleton } from "../components/ui";
 import { ProductCard } from "../components/ProductCard";
+import { Reveal } from "../components/Reveal";
 import { Seo } from "../components/Seo";
 import { titleCase } from "../lib/text";
 import { formatCents } from "../lib/money";
@@ -26,6 +27,104 @@ const HOME_JSON_LD = [
 ];
 
 const TRUST_SIGNALS = ["Cryo-shipped", "Registered genetics", "Ships to all 50 states"];
+const MARQUEE_ITEMS = [
+  "Cryo-Shipped Nationwide",
+  "Registered Genetics",
+  "Family-Owned in Texas",
+  "Ships to All 50 States",
+];
+
+/** Asymmetric visual panel: gradient-mesh blobs behind a rotating brand-seal medallion —
+ * a circular badge with the brand name curved along the ring, echoing the real Heardtastic
+ * logo's own seal/shield concept. Chosen over live product photography (the catalog's
+ * placeholder bakery/seafood test data would look out of place anchoring the brand hero)
+ * and over floating UI chips (felt too generic-SaaS and disconnected from the brand). The
+ * only motion is a slow, ambient rotation — not attention-grabbing, just alive. */
+function HeroSeal() {
+  return (
+    <div className="relative hidden lg:flex items-center justify-center" aria-hidden="true">
+      <div className="absolute -right-10 -top-16 h-72 w-72 rounded-full bg-red-600/30 blur-3xl" />
+      <div className="absolute -bottom-10 -left-10 h-72 w-72 rounded-full bg-navy-500/30 blur-3xl" />
+
+      <div className="relative flex min-h-[420px] w-full items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-xl">
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, var(--cream-50) 1px, transparent 0)",
+            backgroundSize: "24px 24px",
+          }}
+        />
+        <div className="absolute h-64 w-64 rounded-full bg-red-600/20 blur-2xl" />
+
+        <div className="relative h-80 w-80">
+          <svg viewBox="0 0 320 320" className="absolute inset-0 h-full w-full animate-spin-slow">
+            <defs>
+              <path id="sealRingPath" d="M160,30 a130,130 0 1 1 -0.1,0" fill="none" />
+            </defs>
+            <circle
+              cx="160"
+              cy="160"
+              r="130"
+              fill="none"
+              stroke="rgba(253,251,246,0.18)"
+              strokeWidth="1"
+              strokeDasharray="1 7"
+              strokeLinecap="round"
+            />
+            <text className="font-condensed" fill="rgba(253,251,246,0.55)" fontSize="11" letterSpacing="3">
+              <textPath href="#sealRingPath" startOffset="0%">
+                TEXAS ALL-AMERICAN CATTLE CO. &#9733; EST. HEARDTASTIC &#9733;
+              </textPath>
+            </text>
+          </svg>
+
+          <div className="absolute inset-0 m-auto h-52 w-52 rounded-full border border-white/15">
+            <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-xs text-red-500">
+              &#9733;
+            </span>
+            <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-xs text-red-500">
+              &#9733;
+            </span>
+            <span className="absolute -left-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
+              &#9733;
+            </span>
+            <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-xs text-red-500">
+              &#9733;
+            </span>
+          </div>
+
+          <div className="absolute inset-0 m-auto flex h-32 w-32 items-center justify-center rounded-full bg-navy-900 shadow-lift ring-1 ring-white/10">
+            <span className="font-display text-5xl text-cream-50">H</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Auto-scrolling strip restating trust signals for visual rhythm between hero and bento grid. */
+function TrustMarquee() {
+  const loop = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  return (
+    <div
+      aria-hidden="true"
+      className="-mx-4 overflow-hidden border-b border-cream-200 bg-white py-3 sm:-mx-10"
+    >
+      <div className="flex w-max animate-marquee gap-10">
+        {loop.map((item, i) => (
+          <span
+            key={i}
+            className="inline-flex items-center gap-2 whitespace-nowrap font-condensed text-xs font-semibold uppercase tracking-caps text-navy-700"
+          >
+            <span className="text-red-600">&#9733;</span>
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /** Large image-led tile that anchors the bento grid. */
 function FeaturedTile({ product }: { product: Product }) {
@@ -81,18 +180,26 @@ function ValueTile({ icon: IconComp, title, body, className = "", tone = "light"
   const navy = tone === "navy";
   return (
     <div
-      className={`flex flex-col justify-between gap-3 rounded-2xl border p-6 shadow-card transition duration-300 ease-out hover:-translate-y-1 hover:shadow-lift ${
+      className={`relative flex flex-col justify-between gap-3 overflow-hidden rounded-2xl border p-6 shadow-card transition duration-300 ease-out hover:-translate-y-1 hover:shadow-lift ${
         navy ? "border-navy-800 bg-navy-800 text-cream-50" : "border-cream-200 bg-white"
       } ${className}`}
     >
+      {navy && (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-6 -top-6 select-none font-display text-8xl leading-none text-white/10"
+        >
+          &#9733;
+        </span>
+      )}
       <span
-        className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${
+        className={`relative inline-flex h-11 w-11 items-center justify-center rounded-xl ${
           navy ? "bg-navy-700 text-cream-50" : "bg-red-50 text-red-700"
         }`}
       >
         <IconComp size={22} strokeWidth={1.75} />
       </span>
-      <div>
+      <div className="relative">
         <div
           className={`font-condensed text-[15px] font-semibold uppercase tracking-caps ${
             navy ? "text-cream-50" : "text-navy-800"
@@ -139,7 +246,7 @@ export function HomePage() {
       />
 
       {/* Hero band */}
-      <section className="relative -mx-4 -mt-9 overflow-hidden bg-navy-800 px-4 py-16 text-cream-50 sm:-mx-10 sm:px-10 sm:py-20">
+      <section className="relative -mx-4 -mt-9 overflow-hidden bg-navy-800 px-4 pb-12 pt-16 text-cream-50 sm:-mx-10 sm:px-10 sm:pb-14 sm:pt-20">
         {/* subtle poster-star texture */}
         <div
           aria-hidden="true"
@@ -150,7 +257,7 @@ export function HomePage() {
             backgroundSize: "28px 28px",
           }}
         />
-        <div className="relative mx-auto max-w-6xl">
+        <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
           <div className="max-w-2xl animate-fade-rise">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-navy-600 bg-navy-900/40 px-3 py-1 font-condensed text-[12px] font-semibold uppercase tracking-wide2 text-red-600">
               <span aria-hidden="true">★</span> Texas All-American Cattle Co.
@@ -188,11 +295,19 @@ export function HomePage() {
               ))}
             </ul>
           </div>
+
+          <HeroSeal />
+        </div>
+
+        <div className="relative mx-auto mt-14 hidden max-w-6xl justify-center sm:flex">
+          <ChevronDown className="animate-bounce text-navy-300" size={22} aria-hidden="true" />
         </div>
       </section>
 
+      <TrustMarquee />
+
       {/* Bento grid: value props + featured sire */}
-      <section className="mx-auto max-w-6xl py-12">
+      <Reveal className="mx-auto max-w-6xl py-12">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[minmax(168px,1fr)]">
           {featured ? (
             <FeaturedTile product={featured} />
@@ -218,10 +333,10 @@ export function HomePage() {
             className="sm:col-span-2"
           />
         </div>
-      </section>
+      </Reveal>
 
       {/* Featured sires row */}
-      <section className="mx-auto max-w-6xl pb-6">
+      <Reveal className="mx-auto max-w-6xl pb-6">
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
             <div className="mb-1.5 font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">
@@ -262,7 +377,7 @@ export function HomePage() {
             <Button variant="secondary">View All Sires</Button>
           </Link>
         </div>
-      </section>
+      </Reveal>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getProduct } from "../api/products";
 import { createBooking, getBookingAvailability } from "../api/bookings";
@@ -8,6 +8,8 @@ import { useCart } from "../context/CartContext";
 import { formatDetailValue, titleCase } from "../lib/text";
 import { Badge, Button, Input, PriceTag, QuantityStepper, Select, Toast } from "../components/ui";
 import { Seo } from "../components/Seo";
+import { BookingCalendar } from "../components/BookingCalendar";
+import { bookingWindow, formatBookingDate } from "../lib/bookingDates";
 
 function truncate(text: string, max: number): string {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
@@ -27,6 +29,8 @@ export function ProductDetailPage() {
   const [addError, setAddError] = useState<string | null>(null);
   const [added, setAdded] = useState(false);
   const [availability, setAvailability] = useState<BookingAvailability | null>(null);
+  const [availabilityLoading, setAvailabilityLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [booking, setBooking] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
@@ -60,20 +64,31 @@ export function ProductDetailPage() {
     };
   }, [slug]);
 
-  useEffect(() => {
+  const loadAvailability = useCallback(async () => {
     if (!product || product.fulfillment_type !== "booking") return;
-    const start = new Date();
-    start.setDate(start.getDate() + 1);
-    const end = new Date(start);
-    end.setDate(end.getDate() + 89);
-    const formatDate = (value: Date) => value.toISOString().slice(0, 10);
-    getBookingAvailability(product.slug, formatDate(start), formatDate(end))
-      .then((data) => {
-        setAvailability(data);
-        setSelectedDate(data.days.find((day) => day.available)?.date ?? null);
-      })
-      .catch((err) => setBookingError(err instanceof ApiError ? err.message : "Could not load availability."));
+    setAvailabilityLoading(true);
+    setAvailabilityError(null);
+    try {
+      const { start, end } = bookingWindow();
+      const data = await getBookingAvailability(product.slug, start, end);
+      setAvailability(data);
+      setSelectedDate((current) =>
+        current && data.days.some((day) => day.date === current && day.available)
+          ? current
+          : (data.days.find((day) => day.available)?.date ?? null),
+      );
+    } catch (err) {
+      setAvailabilityError(
+        err instanceof ApiError ? err.message : "Could not load availability.",
+      );
+    } finally {
+      setAvailabilityLoading(false);
+    }
   }, [product]);
+
+  useEffect(() => {
+    void loadAvailability();
+  }, [loadAvailability]);
 
   const selectedVariant = useMemo(
     () => product?.variants.find((v) => v.variant_id === selectedVariantId) ?? null,
@@ -115,11 +130,11 @@ export function ProductDetailPage() {
         customer_email: contact.email,
         customer_phone: contact.phone,
       });
-      navigate(`/bookings/${created.id}`);
+      navigate(`/bookings/${created.id}`, { state: { booking: created } });
     } catch (err) {
       setBookingError(err instanceof ApiError ? err.message : "Could not create your booking.");
       if (err instanceof ApiError && err.code === "BOOKING_DATE_UNAVAILABLE") {
-        setAvailability(null);
+        await loadAvailability();
       }
     } finally {
       setBooking(false);
@@ -249,29 +264,33 @@ export function ProductDetailPage() {
           {isBookable ? (
             <form className="border-t border-cream-200 pt-4" onSubmit={handleBooking}>
               <p className="mb-3 text-sm text-ink-600">Choose an available day, then provide your contact details.</p>
-              {availability ? (
-                <div className="mb-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
-                  {availability.days.map((day) => (
-                    <button
-                      key={day.date}
-                      type="button"
-                      disabled={!day.available}
-                      onClick={() => setSelectedDate(day.date)}
-                      className={`rounded-sm border px-2 py-2 text-xs ${selectedDate === day.date ? "border-navy-800 bg-navy-800 text-white" : "border-tan-300 bg-white text-ink-900"} disabled:cursor-not-allowed disabled:opacity-40`}
-                    >
-                      {new Date(`${day.date}T12:00:00`).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p className="mb-4 text-sm text-ink-600">Loading available days…</p>
+              <div className="mb-5 max-h-[28rem] overflow-y-auto rounded-lg border border-cream-200 bg-cream-50 p-4">
+                {availabilityLoading && !availability && (
+                  <p className="text-sm text-ink-600">Loading available days…</p>
+                )}
+                {availabilityError && (
+                  <div role="alert">
+                    <p className="text-sm text-[var(--status-danger)]">{availabilityError}</p>
+                    <Button className="mt-3" type="button" size="sm" variant="secondary" onClick={() => void loadAvailability()}>
+                      Try again
+                    </Button>
+                  </div>
+                )}
+                {availability && !availabilityError && (
+                  <BookingCalendar days={availability.days} selectedDate={selectedDate} onSelect={setSelectedDate} />
+                )}
+              </div>
+              {selectedDate && (
+                <p className="mb-4 rounded-sm bg-navy-50 px-3 py-2 text-sm font-semibold text-navy-800">
+                  Selected: {formatBookingDate(selectedDate, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+                </p>
               )}
               <div className="grid gap-3 sm:grid-cols-2">
                 <Input label="Name" required value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} />
                 <Input label="Email" type="email" required value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} />
                 <Input label="Phone" type="tel" required value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} />
               </div>
-              <Button className="mt-4" size="lg" type="submit" disabled={!selectedDate || booking || !availability}>
+              <Button className="mt-4" size="lg" type="submit" disabled={!selectedDate || booking || availabilityLoading || Boolean(availabilityError)}>
                 {booking ? "Booking…" : "Book this day"}
               </Button>
               {bookingError && <p className="mt-3 text-sm text-[var(--status-danger)]">{bookingError}</p>}

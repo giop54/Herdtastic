@@ -4,10 +4,11 @@ import { Button, PriceTag } from "./ui";
 import { titleCase } from "../lib/text";
 
 export function ProductCard({ product }: { product: Product }) {
+  const isBookable = product.fulfillment_type === "booking";
   const activeVariants = product.variants.filter((v) => v.active);
   const prices = activeVariants.map((v) => v.price_cents);
   const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-  const inStock = activeVariants.some((v) => !v.track_inventory || v.inventory_quantity > 0);
+  const inStock = isBookable || activeVariants.some((v) => !v.track_inventory || v.inventory_quantity > 0);
   const category = product.category_ids[0];
 
   return (
@@ -29,7 +30,12 @@ export function ProductCard({ product }: { product: Product }) {
             Sire photo
           </span>
         )}
-        {!inStock && (
+        {isBookable && (
+          <span className="absolute left-3 top-3 rounded-full bg-red-700/90 px-2.5 py-1 font-condensed text-[11px] font-semibold uppercase tracking-caps text-white backdrop-blur-sm">
+            Book by day
+          </span>
+        )}
+        {!isBookable && !inStock && (
           <span className="absolute left-3 top-3 rounded-full bg-navy-900/85 px-2.5 py-1 font-condensed text-[11px] font-semibold uppercase tracking-caps text-cream-50 backdrop-blur-sm">
             Sold Out
           </span>
@@ -50,10 +56,16 @@ export function ProductCard({ product }: { product: Product }) {
         </Link>
 
         <div className="mt-auto flex items-center justify-between pt-2">
-          {minPrice !== null && <PriceTag cents={minPrice} size="sm" />}
+          {isBookable ? (
+            <span className="font-condensed text-xs font-semibold uppercase tracking-caps text-ink-600">
+              Daily availability
+            </span>
+          ) : minPrice !== null ? (
+            <PriceTag cents={minPrice} size="sm" />
+          ) : null}
           <Link to={`/products/${product.slug}`} tabIndex={-1} aria-hidden="true">
             <Button size="sm" disabled={!inStock}>
-              {inStock ? "Shop" : "Sold Out"}
+              {isBookable ? "Book" : inStock ? "Shop" : "Sold Out"}
             </Button>
           </Link>
         </div>
