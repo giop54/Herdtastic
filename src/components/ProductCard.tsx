@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import type { Product } from "../types";
-import { Button, PriceTag } from "./ui";
+import { LinkButton, PriceTag } from "./ui";
 import { titleCase } from "../lib/text";
 
 export function ProductCard({ product }: { product: Product }) {
@@ -63,11 +63,15 @@ export function ProductCard({ product }: { product: Product }) {
           ) : minPrice !== null ? (
             <PriceTag cents={minPrice} size="sm" />
           ) : null}
-          <Link to={`/products/${product.slug}`} tabIndex={-1} aria-hidden="true">
-            <Button size="sm" disabled={!inStock}>
+          {inStock ? (
+            <LinkButton to={`/products/${product.slug}`} size="sm" tabIndex={-1} aria-hidden="true">
               {isBookable ? "Book" : inStock ? "Shop" : "Sold Out"}
-            </Button>
-          </Link>
+            </LinkButton>
+          ) : (
+            <span className="inline-flex min-h-11 items-center rounded-sm bg-cream-200 px-3.5 py-2 font-condensed text-xs font-semibold uppercase tracking-caps text-ink-400">
+              Sold Out
+            </span>
+          )}
         </div>
       </div>
     </div>

@@ -31,12 +31,21 @@ export function Header() {
             </span>
           </NavLink>
 
-          <nav className="order-last flex w-full gap-5 sm:order-none sm:ml-3 sm:w-auto">
+          <nav className="order-last flex w-full flex-wrap gap-x-5 gap-y-2 sm:order-none sm:ml-3 sm:w-auto">
             <NavLink to="/catalog" className={navLinkClass}>
               Sires &amp; Services
             </NavLink>
             <NavLink to="/orders/lookup" className={navLinkClass}>
               Track an Order
+            </NavLink>
+            <NavLink to="/faq" className={navLinkClass}>
+              FAQ
+            </NavLink>
+            <NavLink to="/about" className={navLinkClass}>
+              About
+            </NavLink>
+            <NavLink to="/contact" className={navLinkClass}>
+              Contact
             </NavLink>
           </nav>
 

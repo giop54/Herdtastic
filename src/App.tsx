@@ -9,6 +9,9 @@ import { CheckoutCancelPage } from "./pages/CheckoutCancelPage";
 import { OrderLookupPage } from "./pages/OrderLookupPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { BookingPage } from "./pages/BookingPage";
+import { FaqPage } from "./pages/FaqPage";
+import { AboutPage } from "./pages/AboutPage";
+import { ContactPage } from "./pages/ContactPage";
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
         <Route path="checkout/success" element={<CheckoutSuccessPage />} />
         <Route path="checkout/cancel" element={<CheckoutCancelPage />} />
         <Route path="orders/lookup" element={<OrderLookupPage />} />
+        <Route path="faq" element={<FaqPage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

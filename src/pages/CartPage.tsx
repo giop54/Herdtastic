@@ -110,22 +110,37 @@ export function CartPage() {
                     group stack as two compact rows instead of squeezing into one and
                     overlapping the stepper. */}
                 <div className="flex items-center gap-4 sm:contents">
-                  <div className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-cream-200">
-                    {product?.images[0] && (
-                      <img
-                        src={product.images[0]}
-                        alt={product.name}
-                        loading="lazy"
-                        decoding="async"
-                        className="h-full w-full object-cover"
-                      />
-                    )}
-                  </div>
+                  {product ? (
+                    <Link
+                      to={`/products/${product.slug}`}
+                      aria-label={`View ${product.name}`}
+                      className="h-16 w-20 flex-shrink-0 overflow-hidden rounded-sm bg-cream-200 no-underline ring-red-700 transition-shadow duration-200 hover:ring-2"
+                    >
+                      {product.images[0] && (
+                        <img
+                          src={product.images[0]}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="h-full w-full object-cover transition-transform duration-200 hover:scale-105"
+                        />
+                      )}
+                    </Link>
+                  ) : (
+                    <div className="h-16 w-20 flex-shrink-0 rounded-sm bg-cream-200" />
+                  )}
 
                   <div className="min-w-0 flex-1">
-                    <p className="font-display text-lg text-navy-800">
-                      {product?.name ?? "Unknown product"}
-                    </p>
+                    {product ? (
+                      <Link
+                        to={`/products/${product.slug}`}
+                        className="font-display text-lg text-navy-800 no-underline transition-colors duration-200 hover:text-red-700 hover:underline"
+                      >
+                        {product.name}
+                      </Link>
+                    ) : (
+                      <p className="font-display text-lg text-navy-800">Unknown product</p>
+                    )}
                     {variant && (
                       <p className="mt-0.5 font-condensed text-xs uppercase tracking-caps text-ink-600">
                         {variant.name} &middot; {formatCents(variant.price_cents, currency)} each

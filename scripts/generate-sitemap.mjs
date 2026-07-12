@@ -32,6 +32,9 @@ const API_BASE_URL = env("VITE_API_BASE_URL");
 const STATIC_ROUTES = [
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/catalog", changefreq: "daily", priority: "0.9" },
+  { path: "/faq", changefreq: "monthly", priority: "0.6" },
+  { path: "/about", changefreq: "monthly", priority: "0.6" },
+  { path: "/contact", changefreq: "monthly", priority: "0.6" },
 ];
 
 function urlEntry({ path, changefreq, priority, lastmod }) {

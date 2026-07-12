@@ -58,11 +58,11 @@ export function CatalogPage() {
       />
       <div className="mb-7">
         <div className="mb-1.5 font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">
-          Semen Catalog
+          Cattle Catalog
         </div>
         <h1 className="font-display text-4xl font-normal text-navy-800">Shop Sires</h1>
         <p className="mt-2 max-w-2xl text-ink-600">
-          Registered sires, published genetics, and straws ready to ship to your operation.
+          Reserve a breeding day or order proven genetics ready to ship to your operation.
         </p>
       </div>
 

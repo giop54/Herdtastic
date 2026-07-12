@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Snowflake, Award, Truck, ArrowRight, ChevronDown } from "lucide-react";
+import { Snowflake, Award, Truck, ArrowRight } from "lucide-react";
 import { listProductsCached } from "../api/products";
 import type { Product } from "../types";
-import { Button, Skeleton } from "../components/ui";
+import { LinkButton, Skeleton } from "../components/ui";
 import { ProductCard } from "../components/ProductCard";
 import { Reveal } from "../components/Reveal";
 import { Seo } from "../components/Seo";
@@ -186,7 +186,7 @@ export function HomePage() {
       />
 
       {/* Hero band */}
-      <section className="relative -mx-4 -mt-9 overflow-hidden bg-navy-800 px-4 pb-12 pt-14 text-cream-50 sm:-mx-8 sm:px-8 sm:pb-16 sm:pt-18 lg:-mx-10 lg:px-10">
+      <section className="relative -mx-4 -mt-9 overflow-hidden bg-navy-800 px-4 pb-12 pt-14 text-cream-50 sm:-mx-8 sm:px-8 sm:pb-16 sm:pt-20 lg:-mx-10 lg:px-10">
         {/* subtle poster-star texture */}
         <div
           aria-hidden="true"
@@ -211,14 +211,10 @@ export function HomePage() {
               Shop registered genetics or reserve a breeding day with trusted Texas sires—all from one dependable cattle operation.
             </p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Link to="/catalog">
-                <Button size="lg">Browse Sires</Button>
-              </Link>
-              <Link to="/catalog">
-                <Button size="lg" variant="ghost" className="!text-cream-50 hover:!bg-navy-700">
-                  Book a Bull
-                </Button>
-              </Link>
+              <LinkButton to="/catalog" size="lg">Browse Sires</LinkButton>
+              <LinkButton to="/catalog" size="lg" variant="ghost" className="!text-cream-50 hover:!bg-navy-700">
+                Book a Bull
+              </LinkButton>
             </div>
             <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
               {TRUST_SIGNALS.map((signal) => (
@@ -238,9 +234,6 @@ export function HomePage() {
           <HeroSeal />
         </div>
 
-        <div className="relative mx-auto mt-14 hidden max-w-6xl justify-center sm:flex">
-          <ChevronDown className="animate-bounce text-navy-300" size={22} aria-hidden="true" />
-        </div>
       </section>
 
       <TrustMarquee />
@@ -312,9 +305,7 @@ export function HomePage() {
         )}
 
         <div className="mt-8 text-center sm:hidden">
-          <Link to="/catalog">
-            <Button variant="secondary">View All Sires</Button>
-          </Link>
+          <LinkButton to="/catalog" variant="secondary">View All Sires</LinkButton>
         </div>
       </Reveal>
     </div>

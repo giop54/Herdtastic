@@ -32,6 +32,19 @@ export function Footer() {
           <Link to="/orders/lookup" className={linkClass}>
             Track an Order
           </Link>
+          <Link to="/faq" className={linkClass}>
+            Frequently Asked Questions
+          </Link>
+          <Link to="/contact" className={linkClass}>
+            Contact Us
+          </Link>
+        </div>
+
+        <div className="flex flex-col gap-2 text-sm">
+          <span className={headingClass}>Company</span>
+          <Link to="/about" className={linkClass}>
+            About Us
+          </Link>
         </div>
       </div>
 
