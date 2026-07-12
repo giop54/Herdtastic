@@ -10,6 +10,15 @@ import { Badge, Button, Input, PriceTag, QuantityStepper, Select, Toast } from "
 import { Seo } from "../components/Seo";
 import { BookingCalendar } from "../components/BookingCalendar";
 import { bookingWindow, formatBookingDate } from "../lib/bookingDates";
+import {
+  ArrowLeft,
+  CalendarDays,
+  CheckCircle2,
+  PackageCheck,
+  ShieldCheck,
+  Snowflake,
+  Truck,
+} from "lucide-react";
 
 function truncate(text: string, max: number): string {
   return text.length > max ? `${text.slice(0, max - 1).trimEnd()}…` : text;
@@ -35,6 +44,7 @@ export function ProductDetailPage() {
   const [booking, setBooking] = useState(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [contact, setContact] = useState({ name: "", email: "", phone: "" });
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
     if (!slug) return;
@@ -47,6 +57,7 @@ export function ProductDetailPage() {
       .then((data) => {
         if (cancelled) return;
         setProduct(data);
+        setSelectedImageIndex(0);
         const firstActive = data.variants.find((v) => v.active);
         setSelectedVariantId(firstActive?.variant_id ?? null);
       })
@@ -193,7 +204,7 @@ export function ProductDetailPage() {
   };
 
   return (
-    <div>
+    <div className="mx-auto max-w-7xl">
       <Seo
         title={product.name}
         description={truncate(product.description, 160)}
@@ -204,67 +215,98 @@ export function ProductDetailPage() {
       />
       <Link
         to="/catalog"
-        className="font-condensed text-xs uppercase tracking-caps text-navy-800 no-underline hover:text-red-700"
+        className="inline-flex min-h-11 items-center gap-2 font-condensed text-xs font-semibold uppercase tracking-caps text-navy-800 no-underline transition-colors hover:text-red-700"
       >
-        &larr; Back to catalog
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to catalog
       </Link>
 
-      <div className="mt-5 grid grid-cols-1 gap-12 md:grid-cols-2">
-        <div>
-          <div className="flex aspect-[460/400] items-center justify-center rounded-lg border border-cream-200 bg-cream-200">
-            {product.images[0] ? (
+      <div className="mt-4 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)] lg:gap-12">
+        <section aria-label={`${product.name} images`}>
+          <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-2xl border border-cream-200 bg-cream-200 shadow-card">
+            {product.images[selectedImageIndex] ? (
               <img
-                src={product.images[0]}
+                src={product.images[selectedImageIndex]}
                 alt={product.name}
                 loading="eager"
                 decoding="async"
-                // Lowercase attr: React 18 passes it through to the DOM (LCP hint) without
-                // the "unknown prop" warning the camelCase `fetchPriority` triggers.
                 {...{ fetchpriority: "high" }}
-                className="h-full w-full rounded-lg object-cover"
+                className="h-full w-full object-cover"
               />
             ) : (
               <span className="font-condensed text-xs uppercase tracking-wide2 text-ink-400">
                 Sire photo &mdash; awaiting real imagery
               </span>
             )}
+            <div className="absolute left-4 top-4">
+              <Badge tone={isBookable || inStock ? "success" : "warning"}>
+                {isBookable ? "Book by day" : inStock ? "Available to ship" : "Sold out"}
+              </Badge>
+            </div>
           </div>
-        </div>
+          {product.images.length > 1 && (
+            <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-5">
+              {product.images.map((image, index) => (
+                <button
+                  key={`${image}-${index}`}
+                  type="button"
+                  onClick={() => setSelectedImageIndex(index)}
+                  aria-label={`View ${product.name} image ${index + 1}`}
+                  aria-pressed={selectedImageIndex === index}
+                  className={`aspect-square min-h-11 overflow-hidden rounded-lg border-2 bg-cream-200 transition-colors ${
+                    selectedImageIndex === index ? "border-red-700" : "border-transparent hover:border-tan-300"
+                  }`}
+                >
+                  <img src={image} alt="" loading="lazy" className="h-full w-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            {(isBookable
+              ? [
+                  [CalendarDays, "90-day calendar"],
+                  [ShieldCheck, "Private booking"],
+                  [CheckCircle2, "Instant confirmation"],
+                ]
+              : [
+                  [Snowflake, "Cryo-shipped"],
+                  [Truck, "All 50 states"],
+                  [ShieldCheck, "Secure checkout"],
+                ]
+            ).map(([Icon, label]) => {
+              const TrustIcon = Icon as typeof Truck;
+              return (
+                <div key={label as string} className="flex flex-col items-center gap-2 rounded-lg bg-cream-100 px-2 py-3 text-center">
+                  <TrustIcon className="h-5 w-5 text-red-700" aria-hidden="true" />
+                  <span className="font-condensed text-[10px] font-semibold uppercase tracking-caps text-navy-800">{label as string}</span>
+                </div>
+              );
+            })}
+          </div>
+        </section>
 
-        <div className="flex flex-col gap-3.5">
-          <Badge tone={isBookable || inStock ? "success" : "warning"}>
-            {isBookable ? "Book by day" : inStock ? "In Stock" : "Sold Out"}
-          </Badge>
-
+        <section className="flex flex-col lg:pt-2">
           <div>
             {category && (
-              <div className="font-condensed text-[13px] font-semibold uppercase tracking-caps text-ink-600">
+              <div className="font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">
                 {titleCase(category)}
               </div>
             )}
-            <h1 className="mt-1 font-display text-4xl font-normal text-navy-800">{product.name}</h1>
+            <h1 className="mt-2 font-display text-4xl leading-tight text-navy-900 sm:text-5xl">{product.name}</h1>
           </div>
 
-          <p className="max-w-lg text-base leading-relaxed text-ink-900">{product.description}</p>
-
-          {!isBookable && product.variants.length > 1 && (
-            <Select
-              label="Options"
-              className="max-w-xs"
-              value={selectedVariantId ?? ""}
-              onChange={(e) => setSelectedVariantId(e.target.value)}
-              options={product.variants.map((v) => ({
-                value: v.variant_id,
-                label: v.active ? v.name : `${v.name} (unavailable)`,
-                disabled: !v.active,
-              }))}
-            />
-          )}
+          <p className="mt-5 max-w-2xl text-base leading-8 text-ink-600 sm:text-lg">{product.description}</p>
 
           {isBookable ? (
-            <form className="border-t border-cream-200 pt-4" onSubmit={handleBooking}>
-              <p className="mb-3 text-sm text-ink-600">Choose an available day, then provide your contact details.</p>
-              <div className="mb-5 max-h-[28rem] overflow-y-auto rounded-lg border border-cream-200 bg-cream-50 p-4">
+            <form className="mt-7 rounded-2xl border border-cream-200 bg-white p-5 shadow-lift sm:p-7" onSubmit={handleBooking}>
+              <div className="flex items-start gap-3 border-b border-cream-200 pb-5">
+                <span className="grid h-11 w-11 flex-none place-items-center rounded-xl bg-red-50 text-red-700"><CalendarDays className="h-5 w-5" aria-hidden="true" /></span>
+                <div>
+                  <h2 className="font-display text-2xl text-navy-900">Reserve your day</h2>
+                  <p className="mt-1 text-sm leading-6 text-ink-600">Choose an available date, then tell us who the booking is for.</p>
+                </div>
+              </div>
+              <div className="my-5 rounded-xl border border-cream-200 bg-cream-50 p-4 sm:p-5">
                 {availabilityLoading && !availability && (
                   <p className="text-sm text-ink-600">Loading available days…</p>
                 )}
@@ -281,52 +323,69 @@ export function ProductDetailPage() {
                 )}
               </div>
               {selectedDate && (
-                <p className="mb-4 rounded-sm bg-navy-50 px-3 py-2 text-sm font-semibold text-navy-800">
-                  Selected: {formatBookingDate(selectedDate, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
-                </p>
+                <div className="mb-5 flex items-center gap-3 rounded-lg bg-navy-900 px-4 py-3 text-cream-50">
+                  <CheckCircle2 className="h-5 w-5 flex-none text-cream-100" aria-hidden="true" />
+                  <p className="text-sm"><span className="font-condensed text-xs font-semibold uppercase tracking-caps text-navy-100">Selected date</span><br /><strong>{formatBookingDate(selectedDate, { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</strong></p>
+                </div>
               )}
               <div className="grid gap-3 sm:grid-cols-2">
-                <Input label="Name" required value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} />
-                <Input label="Email" type="email" required value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} />
-                <Input label="Phone" type="tel" required value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} />
+                <Input label="Full name" autoComplete="name" required value={contact.name} onChange={(e) => setContact({ ...contact, name: e.target.value })} />
+                <Input label="Email" type="email" inputMode="email" autoComplete="email" required value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} />
+                <Input className="sm:col-span-2" label="Phone" type="tel" inputMode="tel" autoComplete="tel" required value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value })} />
               </div>
-              <Button className="mt-4" size="lg" type="submit" disabled={!selectedDate || booking || availabilityLoading || Boolean(availabilityError)}>
-                {booking ? "Booking…" : "Book this day"}
+              <Button className="mt-5 w-full" size="lg" type="submit" disabled={!selectedDate || booking || availabilityLoading || Boolean(availabilityError)}>
+                {booking ? "Confirming your booking…" : selectedDate ? "Confirm this booking" : "Select an available date"}
               </Button>
-              {bookingError && <p className="mt-3 text-sm text-[var(--status-danger)]">{bookingError}</p>}
+              {bookingError && <p className="mt-3 rounded-md bg-red-50 p-3 text-sm text-[var(--status-danger)]" role="alert">{bookingError}</p>}
             </form>
           ) : (
-            <>
-              <div className="flex flex-wrap items-center gap-5 border-t border-cream-200 pt-4">
-                {selectedVariant && <PriceTag cents={selectedVariant.price_cents} size="lg" />}
-                <QuantityStepper value={quantity} min={1} max={maxQuantity} onChange={setQuantity} />
-                <Button size="lg" onClick={handleAddToCart} disabled={!inStock || adding || !selectedVariant}>
-                  {adding ? "Adding…" : inStock ? "Add to Cart" : "Sold Out"}
+            <div className="mt-7 rounded-2xl border border-cream-200 bg-white p-5 shadow-lift sm:p-7">
+              <div className="flex items-end justify-between gap-4 border-b border-cream-200 pb-5">
+                <div>
+                  <p className="font-condensed text-xs font-semibold uppercase tracking-caps text-ink-600">Price</p>
+                  {selectedVariant && <PriceTag cents={selectedVariant.price_cents} size="lg" />}
+                </div>
+                <Badge tone={inStock ? "success" : "warning"}>{inStock ? "In stock" : "Unavailable"}</Badge>
+              </div>
+              {product.variants.length > 1 && (
+                <Select
+                  label="Select option"
+                  className="mt-5"
+                  value={selectedVariantId ?? ""}
+                  onChange={(e) => setSelectedVariantId(e.target.value)}
+                  options={product.variants.map((v) => ({ value: v.variant_id, label: v.active ? v.name : `${v.name} (unavailable)`, disabled: !v.active }))}
+                />
+              )}
+              <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-end">
+                <div>
+                  <p className="mb-2 font-condensed text-xs font-semibold uppercase tracking-caps text-navy-800">Quantity</p>
+                  <QuantityStepper value={quantity} min={1} max={maxQuantity} onChange={setQuantity} />
+                </div>
+                <Button className="w-full sm:flex-1" size="lg" onClick={handleAddToCart} disabled={!inStock || adding || !selectedVariant}>
+                  {adding ? "Adding to cart…" : inStock ? "Add to cart" : "Sold out"}
                 </Button>
               </div>
-              {addError && <p className="text-sm text-[var(--status-danger)]">{addError}</p>}
+              {addError && <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-[var(--status-danger)]" role="alert">{addError}</p>}
               {added && !addError && <Toast tone="success" action="View Cart" onAction={() => navigate("/cart")}>Added to cart.</Toast>}
-            </>
+              <p className="mt-5 flex items-start gap-2 border-t border-cream-200 pt-4 text-xs leading-5 text-ink-600"><PackageCheck className="mt-0.5 h-4 w-4 flex-none text-navy-700" aria-hidden="true" /> Shipping and tax are calculated securely at checkout.</p>
+            </div>
           )}
-        </div>
+        </section>
       </div>
 
       {Object.keys(product.details).length > 0 && (
-        <div className="mt-10 max-w-2xl border-t border-cream-200 pt-6">
-          <div className="mb-2 font-condensed text-xs font-semibold uppercase tracking-caps text-navy-800">
-            Product Details
-          </div>
-          <dl className="divide-y divide-cream-200">
+        <section className="mt-12 rounded-2xl border border-cream-200 bg-white p-5 shadow-soft sm:p-8" aria-labelledby="product-details-title">
+          <p className="font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">At a glance</p>
+          <h2 id="product-details-title" className="mt-2 font-display text-3xl text-navy-900">Product details</h2>
+          <dl className="mt-5 grid gap-px overflow-hidden rounded-xl border border-cream-200 bg-cream-200 sm:grid-cols-2">
             {Object.entries(product.details).map(([key, value]) => (
-              <div key={key} className="flex flex-col gap-0.5 py-2.5 sm:flex-row sm:gap-4">
-                <dt className="font-condensed text-xs uppercase tracking-caps text-ink-600 sm:w-48 sm:flex-shrink-0">
-                  {titleCase(key)}
-                </dt>
-                <dd className="text-sm text-ink-900">{formatDetailValue(value)}</dd>
+              <div key={key} className="bg-cream-50 p-4 sm:p-5">
+                <dt className="font-condensed text-xs font-semibold uppercase tracking-caps text-ink-600">{titleCase(key)}</dt>
+                <dd className="mt-1 text-sm leading-6 text-ink-900">{formatDetailValue(value)}</dd>
               </div>
             ))}
           </dl>
-        </div>
+        </section>
       )}
     </div>
   );
