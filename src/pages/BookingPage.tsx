@@ -4,7 +4,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { cancelBooking, getBooking } from "../api/bookings";
 import { ApiError } from "../api/client";
 import type { Booking } from "../types";
-import { Button, Dialog } from "../components/ui";
+import { Button, DetailPageSkeleton, Dialog } from "../components/ui";
 import { Seo } from "../components/Seo";
 import { formatBookingDate } from "../lib/bookingDates";
 
@@ -44,7 +44,7 @@ export function BookingPage() {
     <div className="mx-auto max-w-xl py-12">
       <Seo title="Your Booking" description="View your Heardtastic booking." noindex />
       {error && <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]">{error}</p>}
-      {!error && !booking && <p className="text-ink-600">Loading your booking…</p>}
+      {!error && !booking && <DetailPageSkeleton />}
       {booking && (
         <div className="rounded-lg border border-cream-200 bg-white p-6">
           {booking.status === "active" && (

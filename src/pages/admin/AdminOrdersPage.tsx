@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Download } from "lucide-react";
 import { downloadOrdersCsv, listAdminOrders } from "../../api/admin";
 import { StatusPill, orderStatusLabel } from "../../components/admin/StatusPill";
-import { Button, Input, Select } from "../../components/ui";
+import { Button, DataPageSkeleton, Input, Select } from "../../components/ui";
 import { formatCents } from "../../lib/money";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { AdminPageHeader } from "./AdminLayout";
@@ -86,7 +86,7 @@ export function AdminOrdersPage() {
       </AdminPageHeader>
 
       {!orders ? (
-        <p className="text-ink-600">Loading orders…</p>
+        <DataPageSkeleton />
       ) : orders.length === 0 ? (
         <p className="text-ink-600">No orders match.</p>
       ) : (

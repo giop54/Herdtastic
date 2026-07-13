@@ -7,6 +7,7 @@ import { bookingWindow, addCalendarDays, formatBookingDate } from "../../lib/boo
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { AdminPageHeader } from "./AdminLayout";
 import type { AdminOrder, Booking, MetricsSummary } from "../../types";
+import { DataPageSkeleton } from "../../components/ui";
 
 function todayInBookingTz(): string {
   // bookingWindow() starts tomorrow in the booking timezone; step back one day.
@@ -43,7 +44,7 @@ export function AdminDashboardPage() {
   }, [describeError]);
 
   if (error) return <p className="text-red-700">{error}</p>;
-  if (!metrics) return <p className="text-ink-600">Loading the morning check…</p>;
+  if (!metrics) return <DataPageSkeleton />;
 
   const maxRevenue = Math.max(1, ...metrics.revenue_by_day.map((d) => d.total_cents));
   const attention = [

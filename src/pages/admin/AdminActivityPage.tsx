@@ -3,6 +3,7 @@ import { listAuditLog } from "../../api/admin";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { AdminPageHeader } from "./AdminLayout";
 import type { AuditEntry } from "../../types";
+import { DataPageSkeleton } from "../../components/ui";
 
 export function AdminActivityPage() {
   const { describeError } = useAdminAuth();
@@ -21,7 +22,7 @@ export function AdminActivityPage() {
     <div>
       <AdminPageHeader title="Activity" />
       {!entries ? (
-        <p className="text-ink-600">Loading activity…</p>
+        <DataPageSkeleton />
       ) : entries.length === 0 ? (
         <p className="text-ink-600">No admin activity recorded yet.</p>
       ) : (

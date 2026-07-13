@@ -8,7 +8,7 @@ import {
   listAdminProducts,
   updateAdminProduct,
 } from "../../api/admin";
-import { Badge, Button, Dialog, Input, Toast } from "../../components/ui";
+import { Badge, Button, DataPageSkeleton, Dialog, Input, Toast } from "../../components/ui";
 import { formatCents } from "../../lib/money";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { AdminPageHeader } from "./AdminLayout";
@@ -117,7 +117,7 @@ export function AdminProductsPage() {
       </AdminPageHeader>
 
       {!products ? (
-        <p className="text-ink-600">Loading products…</p>
+        <DataPageSkeleton />
       ) : visible.length === 0 ? (
         <p className="text-ink-600">
           {products.length === 0

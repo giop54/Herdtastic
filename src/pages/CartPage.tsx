@@ -8,7 +8,7 @@ import { ApiError } from "../api/client";
 import type { Cart, Product } from "../types";
 import { LAST_ORDER_ID_KEY } from "../lib/constants";
 import { formatCents } from "../lib/money";
-import { Button, Dialog, PriceTag, QuantityStepper } from "../components/ui";
+import { Button, DetailPageSkeleton, Dialog, PriceTag, QuantityStepper } from "../components/ui";
 import { Seo } from "../components/Seo";
 
 export function CartPage() {
@@ -60,7 +60,7 @@ export function CartPage() {
     return (
       <>
         {seo}
-        <p className="text-ink-600">Loading your cart&hellip;</p>
+        <DetailPageSkeleton split />
       </>
     );
   }

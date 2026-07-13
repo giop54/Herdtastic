@@ -9,7 +9,7 @@ import {
   updateAdminProduct,
   updateAdminVariant,
 } from "../../api/admin";
-import { Button, Input, Select, Toast } from "../../components/ui";
+import { Button, DetailPageSkeleton, Input, Select, Toast } from "../../components/ui";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { AdminPageHeader } from "./AdminLayout";
 import type { AdminProduct, AdminVariantInput } from "../../types";
@@ -203,7 +203,7 @@ export function AdminProductEditPage() {
   }
 
   if (error && !loaded) return <p className="text-red-700">{error}</p>;
-  if (!loaded) return <p className="text-ink-600">Loading product…</p>;
+  if (!loaded) return <DetailPageSkeleton />;
 
   return (
     <div className="max-w-4xl">

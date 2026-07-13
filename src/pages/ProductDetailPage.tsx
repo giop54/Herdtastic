@@ -6,7 +6,7 @@ import { ApiError } from "../api/client";
 import type { BookingAvailability, Product } from "../types";
 import { useCart } from "../context/CartContext";
 import { formatDetailValue, titleCase } from "../lib/text";
-import { Badge, Button, Input, PriceTag, QuantityStepper, Select, Toast } from "../components/ui";
+import { Badge, Button, DetailPageSkeleton, Input, PriceTag, QuantityStepper, Select, Skeleton, Toast } from "../components/ui";
 import { Seo } from "../components/Seo";
 import { BookingCalendar } from "../components/BookingCalendar";
 import { bookingWindow, formatBookingDate } from "../lib/bookingDates";
@@ -183,7 +183,7 @@ export function ProductDetailPage() {
   }
 
   if (!product) {
-    return <p className="text-ink-600">Loading&hellip;</p>;
+    return <DetailPageSkeleton split />;
   }
 
   const category = product.category_ids[0];
@@ -314,7 +314,13 @@ export function ProductDetailPage() {
               </div>
               <div className="my-5 rounded-xl border border-cream-200 bg-cream-50 p-4 sm:p-5">
                 {availabilityLoading && !availability && (
-                  <p className="text-sm text-ink-600">Loading available days…</p>
+                  <div role="status" aria-label="Loading available dates" aria-busy="true">
+                    <span className="sr-only">Loading available dates</span>
+                    <Skeleton className="h-5 w-36" />
+                    <div className="mt-4 grid grid-cols-7 gap-1">
+                      {Array.from({ length: 35 }, (_, index) => <Skeleton key={index} className="aspect-square rounded-sm" />)}
+                    </div>
+                  </div>
                 )}
                 {availabilityError && (
                   <div role="alert">

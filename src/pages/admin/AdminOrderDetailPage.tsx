@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getAdminOrder, updateAdminOrder } from "../../api/admin";
 import { StatusPill, orderStatusLabel } from "../../components/admin/StatusPill";
-import { Button, Input, Select, Toast } from "../../components/ui";
+import { Button, DetailPageSkeleton, Input, Select, Toast } from "../../components/ui";
 import { formatCents } from "../../lib/money";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { AdminPageHeader } from "./AdminLayout";
@@ -70,7 +70,7 @@ export function AdminOrderDetailPage() {
   }
 
   if (error) return <p className="text-red-700">{error}</p>;
-  if (!order) return <p className="text-ink-600">Loading order…</p>;
+  if (!order) return <DetailPageSkeleton />;
 
   const money: [string, number][] = [
     ["Subtotal", order.subtotal_cents],

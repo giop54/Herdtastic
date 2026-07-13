@@ -9,4 +9,4 @@ export { Tag } from "./Tag";
 export { PriceTag } from "./PriceTag";
 export { Dialog } from "./Dialog";
 export { Toast } from "./Toast";
-export { Skeleton, ProductCardSkeleton } from "./Skeleton";
+export { Skeleton, ProductCardSkeleton, DetailPageSkeleton, DataPageSkeleton } from "./Skeleton";

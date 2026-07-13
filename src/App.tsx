@@ -13,6 +13,7 @@ import { BookingPage } from "./pages/BookingPage";
 import { FaqPage } from "./pages/FaqPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
+import { DataPageSkeleton } from "./components/ui";
 
 // The back office is its own lazy chunk so shoppers never download it.
 const AdminApp = lazy(() => import("./pages/admin"));
@@ -24,7 +25,7 @@ function App() {
         path="admin/*"
         element={
           <Suspense
-            fallback={<div className="p-10 text-center text-ink-600">Loading admin…</div>}
+            fallback={<div className="p-6"><DataPageSkeleton /></div>}
           >
             <AdminApp />
           </Suspense>
