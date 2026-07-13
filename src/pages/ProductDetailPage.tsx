@@ -47,6 +47,12 @@ export function ProductDetailPage() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   useEffect(() => {
+    if (!added) return;
+    const timeout = window.setTimeout(() => setAdded(false), 5000);
+    return () => window.clearTimeout(timeout);
+  }, [added]);
+
+  useEffect(() => {
     if (!slug) return;
     let cancelled = false;
     setProduct(null);
@@ -366,7 +372,17 @@ export function ProductDetailPage() {
                 </Button>
               </div>
               {addError && <p className="mt-4 rounded-md bg-red-50 p-3 text-sm text-[var(--status-danger)]" role="alert">{addError}</p>}
-              {added && !addError && <Toast tone="success" action="View Cart" onAction={() => navigate("/cart")}>Added to cart.</Toast>}
+              {added && !addError && (
+                <Toast
+                  tone="success"
+                  action="View cart"
+                  onAction={() => navigate("/cart")}
+                  onDismiss={() => setAdded(false)}
+                  className="fixed bottom-4 left-4 right-4 z-50 w-auto sm:left-auto sm:right-6 sm:max-w-md"
+                >
+                  Added to cart.
+                </Toast>
+              )}
               <p className="mt-5 flex items-start gap-2 border-t border-cream-200 pt-4 text-xs leading-5 text-ink-600"><PackageCheck className="mt-0.5 h-4 w-4 flex-none text-navy-700" aria-hidden="true" /> Shipping and tax are calculated securely at checkout.</p>
             </div>
           )}
