@@ -1,6 +1,6 @@
-# Heardtastic
+# Herdtastic
 
-Storefront for Heardtastic, a Texas All-American Cattle Co. selling bovine semen straws for breeding: product catalog, guest cart, Stripe-hosted checkout, and guest order tracking.
+Storefront for Herdtastic, a Texas All-American Cattle Co. selling bovine semen straws for breeding: product catalog, guest cart, Stripe-hosted checkout, and guest order tracking.
 
 ## Stack
 
@@ -8,7 +8,7 @@ React + TypeScript + Vite, React Router, Tailwind CSS. No backend in this repo �
 
 ## Design system
 
-Visual styling (colors, type, spacing, components) is ported from the "Heardtastic Design System" project in Claude Design — see [`AGENTS.md`](AGENTS.md#design-system) for how it's wired in and how to re-sync it.
+Visual styling (colors, type, spacing, components) is ported from the "Herdtastic Design System" project in Claude Design — see [`AGENTS.md`](AGENTS.md#design-system) for how it's wired in and how to re-sync it.
 
 ## Setup
 

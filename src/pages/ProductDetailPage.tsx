@@ -188,13 +188,14 @@ export function ProductDetailPage() {
 
   const category = product.category_ids[0];
   const isBookable = product.fulfillment_type === "booking";
-  const productJsonLd = {
+  const productJsonLd = [{
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.description,
     image: product.images,
     sku: product.variants[0]?.sku,
+    brand: { "@type": "Brand", name: "Herdtastic" },
     offers: product.variants.map((v) => ({
       "@type": "Offer",
       sku: v.sku,
@@ -207,7 +208,16 @@ export function ProductDetailPage() {
           : "https://schema.org/OutOfStock",
       url: `${window.location.origin}/products/${product.slug}`,
     })),
-  };
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${window.location.origin}/` },
+      { "@type": "ListItem", position: 2, name: "Catalog", item: `${window.location.origin}/catalog` },
+      { "@type": "ListItem", position: 3, name: product.name },
+    ],
+  }];
 
   return (
     <div className="mx-auto max-w-7xl">

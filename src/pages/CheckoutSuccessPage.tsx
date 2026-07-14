@@ -17,7 +17,7 @@ export function CheckoutSuccessPage() {
     <div className="mx-auto max-w-xl py-14 text-center">
       <Seo
         title="Order Confirmed"
-        description="Your Heardtastic order is confirmed."
+        description="Your Herdtastic order is confirmed."
         path="/checkout/success"
         noindex
       />

@@ -40,8 +40,8 @@ const contactDetails = [
   {
     icon: Mail,
     label: "Email",
-    value: "hello@heardtastic.com",
-    href: "mailto:hello@heardtastic.com",
+    value: "hello@herdtastic.com",
+    href: "mailto:hello@herdtastic.com",
   },
   {
     icon: Phone,
@@ -61,7 +61,7 @@ export function ContactPage() {
     <>
       <Seo
         title="Contact Us"
-        description="Get Heardtastic help with daily cattle bookings, shipping orders, checkout, and common questions."
+        description="Get Herdtastic help with daily cattle bookings, shipping orders, checkout, and common questions."
         path="/contact"
       />
 
@@ -69,7 +69,7 @@ export function ContactPage() {
         <section className="relative overflow-hidden rounded-2xl border border-cream-200 bg-white px-6 py-12 shadow-raised sm:px-10 sm:py-16 lg:px-14">
           <Send className="absolute -right-8 -top-8 h-52 w-52 -rotate-12 text-navy-900/[0.035]" aria-hidden="true" />
           <p className="font-condensed text-xs font-semibold uppercase tracking-wide2 text-red-700">
-            Contact Heardtastic
+            Contact Herdtastic
           </p>
           <h1 className="mt-4 max-w-3xl font-display text-4xl leading-tight text-navy-900 sm:text-5xl lg:text-6xl">
             Let&rsquo;s get you to the right place.
@@ -182,10 +182,10 @@ export function ContactPage() {
         <section className="flex flex-col items-start justify-between gap-6 rounded-2xl border border-tan-300 bg-cream-100 p-6 sm:flex-row sm:items-center sm:p-8">
           <div>
             <h2 className="font-display text-2xl text-navy-900 sm:text-3xl">Want to know who we are?</h2>
-            <p className="mt-2 leading-7 text-ink-600">Meet the Texas cattle company behind Heardtastic.</p>
+            <p className="mt-2 leading-7 text-ink-600">Meet the Texas cattle company behind Herdtastic.</p>
           </div>
           <LinkButton to="/about" variant="secondary" size="lg">
-            About Heardtastic
+            About Herdtastic
           </LinkButton>
         </section>
       </div>

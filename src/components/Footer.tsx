@@ -12,7 +12,7 @@ export function Footer() {
         <div className="flex max-w-sm items-center gap-4">
           <BrandMedallion className="h-20 w-20 flex-shrink-0 ring-1 ring-white/15" decorative />
           <div className="flex flex-col gap-2">
-            <span className="font-display text-xl text-cream-50">Heardtastic</span>
+            <span className="font-display text-xl text-cream-50">Herdtastic</span>
             <span className="text-sm leading-relaxed text-navy-100">
             Family-owned in Texas. Proven genetics, cryo-shipped nationwide.
             </span>
@@ -49,7 +49,7 @@ export function Footer() {
       </div>
 
       <div className="mx-auto mt-7 max-w-6xl border-t border-navy-700 pt-4 font-condensed text-[11px] uppercase tracking-caps text-navy-100">
-        &copy; {new Date().getFullYear()} Heardtastic &middot; Texas All-American Cattle Co. &middot; Ships to
+        &copy; {new Date().getFullYear()} Herdtastic &middot; Texas All-American Cattle Co. &middot; Ships to
         all 50 states
       </div>
     </footer>

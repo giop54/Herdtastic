@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
-const SITE_NAME = "Heardtastic";
+const SITE_NAME = "Herdtastic";
 
 type OgType = "website" | "product";
 
 interface SeoProps {
-  /** Page title. Rendered as "{title} | Heardtastic" unless it already equals the site name. */
+  /** Page title. Rendered as "{title} | Herdtastic" unless it already equals the site name. */
   title: string;
   description: string;
   /** Canonical path, e.g. "/products/bravos-legacy". Defaults to the current path (no query string). */
@@ -16,7 +16,7 @@ interface SeoProps {
   type?: OgType;
   /** One or more schema.org objects to emit as a JSON-LD <script> tag. */
   jsonLd?: object | object[];
-  /** Pass false to use `title` verbatim instead of appending " | Heardtastic" — for the homepage. */
+  /** Pass false to use `title` verbatim instead of appending " | Herdtastic" — for the homepage. */
   appendSiteName?: boolean;
 }
 

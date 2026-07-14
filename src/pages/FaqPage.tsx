@@ -16,14 +16,14 @@ const faqSections = [
     icon: Truck,
     questions: [
       {
-        question: "What can I purchase from Heardtastic?",
+        question: "What can I purchase from Herdtastic?",
         answer:
           "Our catalog includes two kinds of products: frozen genetics that ship to you and ranch services that you reserve for a specific day. Each product page clearly shows whether the item ships or is booked by date.",
       },
       {
         question: "Where do you ship?",
         answer:
-          "Heardtastic cryo-ships frozen genetics to all 50 states. Available shipping options and the final order total are shown during checkout.",
+          "Herdtastic cryo-ships frozen genetics to all 50 states. Available shipping options and the final order total are shown during checkout.",
       },
       {
         question: "How do I track an order?",
@@ -100,7 +100,7 @@ export function FaqPage() {
     <>
       <Seo
         title="Frequently Asked Questions"
-        description="Answers about Heardtastic shipping, daily cattle bookings, guest checkout, order tracking, and cancellations."
+        description="Answers about Herdtastic shipping, daily cattle bookings, guest checkout, order tracking, and cancellations."
         path="/faq"
         jsonLd={faqJsonLd}
       />
@@ -109,7 +109,7 @@ export function FaqPage() {
         <section className="relative overflow-hidden rounded-2xl border border-cream-200 bg-navy-900 px-5 py-10 text-cream-50 shadow-raised sm:px-10 sm:py-14">
           <CircleHelp className="absolute -right-7 -top-8 h-44 w-44 text-white/[0.04]" aria-hidden="true" />
           <p className="font-condensed text-xs font-semibold uppercase tracking-wide2 text-cream-100">
-            Heardtastic help center
+            Herdtastic help center
           </p>
           <h1 className="mt-3 max-w-3xl font-display text-4xl leading-tight sm:text-5xl">
             Straight answers, from pasture to purchase.

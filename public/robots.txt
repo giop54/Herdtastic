@@ -5,4 +5,4 @@ Disallow: /checkout/
 Disallow: /orders/lookup
 Disallow: /admin
 
-Sitemap: https://www.heardtastic.example/sitemap.xml
+Sitemap: https://www.herdtastic.com/sitemap.xml

@@ -42,7 +42,7 @@ export function BookingPage() {
 
   return (
     <div className="mx-auto max-w-xl py-12">
-      <Seo title="Your Booking" description="View your Heardtastic booking." noindex />
+      <Seo title="Your Booking" description="View your Herdtastic booking." noindex />
       {error && <p className="rounded-md bg-[var(--status-danger-bg)] p-4 text-[var(--status-danger)]">{error}</p>}
       {!error && !booking && <DetailPageSkeleton />}
       {booking && (

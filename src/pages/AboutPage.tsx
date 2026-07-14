@@ -26,7 +26,7 @@ export function AboutPage() {
     <>
       <Seo
         title="About Us"
-        description="Meet Heardtastic, a family-owned Texas cattle company connecting breeders with registered genetics, nationwide cryogenic shipping, and daily ranch bookings."
+        description="Meet Herdtastic, a family-owned Texas cattle company connecting breeders with registered genetics, nationwide cryogenic shipping, and daily ranch bookings."
         path="/about"
       />
 
@@ -41,7 +41,7 @@ export function AboutPage() {
               Cattle know-how, made easier to access.
             </h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-navy-100 sm:text-lg">
-              Heardtastic is Texas All-American Cattle Co.&mdash;a family-owned operation built to
+              Herdtastic is Texas All-American Cattle Co.&mdash;a family-owned operation built to
               connect cattle breeders with proven genetics and dependable ways to buy or book.
             </p>
           </div>
@@ -112,7 +112,7 @@ export function AboutPage() {
                 Find the right fit for your operation.
               </h2>
               <p className="mt-2 max-w-2xl leading-7 text-ink-600">
-                Browse shippable genetics and bookable services in the Heardtastic catalog.
+                Browse shippable genetics and bookable services in the Herdtastic catalog.
               </p>
             </div>
           </div>

@@ -15,14 +15,21 @@ const HOME_JSON_LD = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "Heardtastic",
-    alternateName: "Heardtastic Texas All-American Cattle Co.",
+    name: "Herdtastic",
+    alternateName: "Herdtastic Texas All-American Cattle Co.",
     url: window.location.origin,
+    email: "hello@herdtastic.com",
+    areaServed: "US",
+    contactPoint: {
+      "@type": "ContactPoint",
+      contactType: "customer service",
+      email: "hello@herdtastic.com",
+    },
   },
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "Heardtastic",
+    name: "Herdtastic",
     url: window.location.origin,
   },
 ];
@@ -178,9 +185,9 @@ export function HomePage() {
   return (
     <div>
       <Seo
-        title="Heardtastic — Proven Texas Genetics, Shipped Nationwide"
+        title="Herdtastic — Texas Cattle Genetics & Registered Sires"
         appendSiteName={false}
-        description="Registered Texas sires and cryo-shipped semen straws for cattle breeding. Proven genetics, published details, and nationwide shipping from our Texas facility."
+        description="Shop registered Texas sires and cryo-shipped bull semen straws for cattle breeding. Proven genetics, published sire details, and shipping to all 50 states from our Texas ranch."
         path="/"
         jsonLd={HOME_JSON_LD}
       />

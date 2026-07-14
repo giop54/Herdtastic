@@ -24,7 +24,7 @@ function loadEnvFile(path) {
 const fileEnv = { ...loadEnvFile(join(rootDir, ".env")), ...loadEnvFile(join(rootDir, ".env.local")) };
 const env = (key) => process.env[key] ?? fileEnv[key];
 
-const SITE_URL = (env("VITE_SITE_URL") ?? "https://www.heardtastic.example").replace(/\/$/, "");
+const SITE_URL = (env("VITE_SITE_URL") ?? "https://www.herdtastic.com").replace(/\/$/, "");
 const DEFAULT_API_BASE_URL =
   "https://ecommerce-api-dev-1063728289659.us-central1.run.app/api/v1";
 const configuredApiBaseUrl = env("VITE_API_BASE_URL");

@@ -14,8 +14,8 @@ export function BrandMedallion({
       className={`relative block aspect-square overflow-hidden rounded-full bg-white ${className}`}
     >
       <img
-        src="/brand/heardtastic-medallion.png"
-        alt={decorative ? "" : "Heardtastic Texas All-American Cattle Co."}
+        src="/brand/herdtastic-medallion.png"
+        alt={decorative ? "" : "Herdtastic Texas All-American Cattle Co."}
         aria-hidden={decorative || undefined}
         loading={priority ? "eager" : "lazy"}
         decoding="async"

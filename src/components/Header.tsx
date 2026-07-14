@@ -24,7 +24,7 @@ export function Header() {
           <NavLink to="/" className="group flex items-center gap-3">
             <BrandMedallion className="h-12 w-12 flex-shrink-0 border border-cream-200 shadow-soft sm:h-14 sm:w-14" decorative priority />
             <span className="flex flex-col leading-none">
-              <span className="font-display text-lg text-navy-800 sm:text-xl">Heardtastic</span>
+              <span className="font-display text-lg text-navy-800 sm:text-xl">Herdtastic</span>
               <span className="mt-1 hidden font-condensed text-[10px] uppercase tracking-wide2 text-red-700 sm:block">
                 Texas All-American Cattle Co.
               </span>

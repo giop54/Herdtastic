@@ -30,7 +30,7 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen flex-col bg-cream-50 md:flex-row">
-      <Seo title="Admin" description="Heardtastic back office." noindex />
+      <Seo title="Admin" description="Herdtastic back office." noindex />
       <aside className="flex shrink-0 flex-row items-center gap-1 overflow-x-auto bg-navy-800 px-3 py-2 md:sticky md:top-0 md:h-screen md:w-52 md:flex-col md:items-stretch md:gap-0 md:overflow-visible md:px-0 md:py-4">
         <div className="px-2 font-display text-lg text-cream-50 md:px-5 md:pb-4">
           Heard<span className="text-red-600">tastic</span>

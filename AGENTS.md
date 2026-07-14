@@ -183,10 +183,14 @@ What was ported and where:
   `src/types.ts` and omit anything that would require fabricating data (e.g. no rating stars, no
   EPD tabs, no invented shipping thresholds).
 
-Brand name note: the design system's badge logo and its own docs read **"Heardtastic"**
-(a "heard" pun), confirmed as correct over the initial "Herdtastic" spelling this repo started
-with. The project directory is still named `herdtastic` — only the visible wordmark/copy/package
-name were updated, not the folder, to avoid an unnecessary disruptive rename.
+Brand name note: the brand is **"Herdtastic"** — this reverses an earlier decision that had
+standardized on the design system's "Heardtastic" spelling. The owner bought the production
+domain `herdtastic.com` (2026-07-13) and confirmed "Herdtastic" is the intended name; all
+wordmark/copy/package/SEO text now uses it. Two leftovers still carry the old spelling and
+should not be "fixed" blindly: the backend directory path `/Users/giop54/heardtastic-backend`
+(a real on-disk path) and the design-system project's own name/assets — in particular
+`public/brand/herdtastic-medallion.png` is renamed on disk but the artwork itself still reads
+"HEARDTASTIC" and needs a re-exported image from the owner.
 
 To re-sync after the design system changes: use `DesignSync.list_files` /
 `DesignSync.get_file` against the project id above, diff against what's in `src/styles/tokens/`
@@ -220,12 +224,12 @@ render JS, so this is a reasonable tradeoff without introducing SSR.
   `Sitemap:` line always matches `VITE_SITE_URL`). If the API is unreachable it logs a warning and
   falls back to the static routes only — it must never fail the build. Both output files are
   regenerated on every build; hand edits to them won't stick.
-- **`VITE_SITE_URL`** in `.env` is a placeholder (`https://www.heardtastic.example` — `.example`
-  is the IANA-reserved placeholder TLD, chosen deliberately so it can't be mistaken for a real
-  domain). It's used to build absolute URLs in the sitemap and `robots.txt`. **Update it to the
-  real production domain before deploying** — canonical/OG tags use `window.location.origin` at
-  runtime so they're always correct regardless of this value, but the sitemap and robots.txt are
-  generated at build time and have no other way to know the real domain.
+- **`VITE_SITE_URL`** in `.env` is the real production domain (`https://www.herdtastic.com` —
+  www is primary; the apex 308-redirects to it in Vercel's domain settings). It's used to build
+  absolute URLs in the sitemap, `robots.txt`, and the static OG/canonical tags in `index.html`.
+  Canonical/OG tags set by `Seo.tsx` use `window.location.origin` at runtime so they're always
+  correct regardless of this value, but the sitemap and robots.txt are generated at build time
+  and have no other way to know the real domain.
 
 ## Admin panel (/admin)
 

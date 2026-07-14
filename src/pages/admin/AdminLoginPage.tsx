@@ -40,7 +40,7 @@ export function AdminLoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-navy-800 p-6">
-      <Seo title="Admin sign in" description="Heardtastic back office." noindex />
+      <Seo title="Admin sign in" description="Herdtastic back office." noindex />
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-sm rounded-lg border-2 border-navy-900 bg-white p-8 shadow-raised"

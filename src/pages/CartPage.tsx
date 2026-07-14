@@ -54,7 +54,7 @@ export function CartPage() {
     }
   }
 
-  const seo = <Seo title="Your Cart" description="Review your Heardtastic cart." path="/cart" noindex />;
+  const seo = <Seo title="Your Cart" description="Review your Herdtastic cart." path="/cart" noindex />;
 
   if (loading && !cart) {
     return (

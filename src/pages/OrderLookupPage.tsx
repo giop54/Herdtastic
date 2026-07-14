@@ -47,7 +47,7 @@ export function OrderLookupPage() {
     <div className="mx-auto max-w-6xl py-1 sm:py-6">
       <Seo
         title="Track an Order"
-        description="Look up the current status and shipment progress of your Heardtastic order."
+        description="Look up the current status and shipment progress of your Herdtastic order."
         path="/orders/lookup"
         noindex
       />
